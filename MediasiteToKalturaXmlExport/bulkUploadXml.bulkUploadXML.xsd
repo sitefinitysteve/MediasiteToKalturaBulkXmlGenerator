@@ -1,0 +1,3231 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0">
+	<xs:complexType name="T_mrss">
+		<xs:sequence>
+		
+			<xs:element maxOccurs="1" minOccurs="0" name="ks" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>KS of the user ingesting the content</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element maxOccurs="unbounded" minOccurs="1" ref="channel">
+				<xs:annotation>
+					<xs:documentation>A single entry wrapper element</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element maxOccurs="unbounded" minOccurs="0" ref="mrss-extension"/>
+
+		</xs:sequence>
+		<xs:attribute name="version" type="xs:decimal" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					The XSD version to be used
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="T_channel">
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" minOccurs="1" ref="item">
+				<xs:annotation>
+					<xs:documentation>holding entry element</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element maxOccurs="unbounded" minOccurs="0" ref="channel-extension"/>
+
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="T_item">
+		<xs:sequence>
+			<xs:element maxOccurs="1" minOccurs="0" name="action">
+				<xs:annotation>
+					<xs:documentation>
+						The action to apply from the item element:<br/>
+						Add - Add a new entry<br/>
+						Update - Update an existing entry<br/>
+						Delete - Delete an existing entry
+					</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="add"/>
+						<xs:enumeration value="update"/>
+						<xs:enumeration value="delete"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:choice maxOccurs="2" minOccurs="1">
+				<xs:choice maxOccurs="1" minOccurs="1">
+					<xs:sequence>
+						<xs:element maxOccurs="1" minOccurs="1" name="type" type="KalturaEntryType">
+							<xs:annotation>
+								<xs:documentation>
+									The type of the new entry.<br/>
+									Only the MEDIA_CLIP (= 1) type is supported for XML ingestion.<br/> 
+									This option is used only when applying an “Add” Action.
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element maxOccurs="1" minOccurs="0" name="licenseType" type="KalturaLicenseType">
+							<xs:annotation>
+								<xs:documentation>
+									The license type of the new entry.<br/>
+									This option is used only when applying an “Add” Action.
+								</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+					</xs:sequence>
+					<xs:element maxOccurs="1" minOccurs="1" name="entryId">
+						<xs:annotation>
+							<xs:documentation>
+								The identifier of the entry that an update/delete action applies to.<br/>
+								This option is used only when applying an “Update” or a “Delete” Action.
+							</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:maxLength value="20"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+				</xs:choice>
+				<xs:element maxOccurs="1" minOccurs="1" name="referenceId">
+					<xs:annotation>
+						<xs:documentation>Partner external identifier of the entry</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="2000"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element maxOccurs="1" minOccurs="0" name="parentReferenceId">
+					<xs:annotation>
+						<xs:documentation>Partner external identifier of the parent entry's reference id'</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="100"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:choice>
+			<xs:element maxOccurs="1" minOccurs="0" name="userId">
+				<xs:annotation>
+					<xs:documentation>The user identifier of the content creator/owner</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="100"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element maxOccurs="1" minOccurs="0" ref="entitledUsersEdit">
+				<xs:annotation>
+					<xs:documentation>Comma-separated list of entry's co-editors</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element maxOccurs="1" minOccurs="0" ref="entitledUsersPublish">
+				<xs:annotation>
+					<xs:documentation>Comma-separated list of entry's co-publishers</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element maxOccurs="1" minOccurs="0" ref="entitledUsersView">
+				<xs:annotation>
+					<xs:documentation>Comma-separated list of entry's co-viewers</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element maxOccurs="1" minOccurs="0" name="name">
+				<xs:annotation>
+					<xs:documentation>The title of the entry</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="256"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element maxOccurs="1" minOccurs="0" name="description" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Text that describes the entry</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element maxOccurs="1" minOccurs="0" name="keepManualThumbnails" type="xs:boolean">
+				<xs:annotation>
+					<xs:documentation>flag to keep original thumbnails</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element maxOccurs="1" minOccurs="0" ref="tags">
+				<xs:annotation>
+					<xs:documentation>Tags associated with the entry</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element maxOccurs="1" minOccurs="0" ref="categories">
+				<xs:annotation>
+					<xs:documentation>The categories assigned to the entry</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element maxOccurs="1" minOccurs="0" name="partnerData">
+				<xs:annotation>
+					<xs:documentation>
+						Publisher-specific information related to the entry.<br/>
+						Usually used for implementing an account-specific integration.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="4000"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element maxOccurs="1" minOccurs="0" name="partnerSortData" type="xs:int">
+				<xs:annotation>
+					<xs:documentation>
+						Partner-specific order used to enable custom ordering and filtering.<br/>
+						Usually used to implement an account-specific integration.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:choice maxOccurs="1" minOccurs="0">
+				<xs:element maxOccurs="1" minOccurs="1" name="accessControlId" type="xs:int">
+					<xs:annotation>
+						<xs:documentation>The access control profile identifier of the entry. If not specified, the account's default access control profile is used.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element maxOccurs="1" minOccurs="1" name="accessControl">
+					<xs:annotation>
+						<xs:documentation>The access control profile system name of the entry. If not specified, the account's default access control profile is used. You can use the Kaltura API to set a specific access control system name.</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="120"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:choice>
+			<xs:choice maxOccurs="1" minOccurs="0">
+				<xs:element maxOccurs="1" minOccurs="1" name="conversionProfileId" type="xs:int">
+					<xs:annotation>
+						<xs:documentation>
+							The transcoding profile identifier of the entry.<br/>
+							If the transcoding profile is not specified, the transcoding profile set to the bulk upload API action is used.<br/>
+							If the bulk upload API action's transcoding profile is not specified or is set to (-1), the account's default transcoding profile is used. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element maxOccurs="1" minOccurs="1" name="conversionProfile">
+					<xs:annotation>
+						<xs:documentation>
+							The transcoding profile system name of the entry.<br/>
+							If the transcoding profile is not specified, the transcoding profile set to the bulk upload API action is used.<br/>
+							If the bulk upload API action's transcoding profile is not specified or is set to (-1), the account's default transcoding profile is used.<br/>
+							You can use the Kaltura API to set a specific transcoding profile system name.
+						</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="120"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:choice>
+			<xs:element maxOccurs="1" minOccurs="0" name="startDate" type="xs:dateTime">
+				<xs:annotation>
+					<xs:documentation>
+						The scheduled start date for the entry.<br/>
+						When the start date is not defined, the entry is available for publishing upon creation.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element maxOccurs="1" minOccurs="0" name="endDate" type="xs:dateTime">
+				<xs:annotation>
+					<xs:documentation>
+						The scheduled end date for the entry.<br/>
+						When the end date is not defined, the entry is available for publishing with no end time restriction.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:choice maxOccurs="1" minOccurs="0">
+				<xs:element maxOccurs="1" minOccurs="1" name="templateEntryId">
+					<xs:annotation>
+						<xs:documentation>
+							Template entry reference ID.
+						</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="20"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element maxOccurs="1" minOccurs="1" name="templateEntry">
+					<xs:annotation>
+						<xs:documentation>
+							Template entry reference ID.
+						</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="2000"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:choice>
+
+			<xs:choice maxOccurs="1" minOccurs="0">
+				<xs:element maxOccurs="1" minOccurs="1" ref="media">
+					<xs:annotation>
+						<xs:documentation>
+							Specifies media-related information, such as media type
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<!--
+				Not supported yet
+				<xs:element ref="mix" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="playlist" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="data" minOccurs="1" maxOccurs="1" />
+				<xs:element ref="liveStream" minOccurs="1" maxOccurs="1" />
+				-->
+			</xs:choice>
+			
+			<xs:element maxOccurs="1" minOccurs="0" name="msDuration" type="xs:int">
+				<xs:annotation>
+					<xs:documentation>
+						The duration in miliseconds
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element maxOccurs="1" minOccurs="0" ref="contentAssets">
+				<xs:annotation>
+					<xs:documentation>
+						Specifies media/flavor asset information, such as location of media files to upload, type of ingestion, and related transcoding flavor settings
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element maxOccurs="1" minOccurs="0" ref="thumbnails">
+				<xs:annotation>
+					<xs:documentation>
+						Specifies thumbnail-related information, such as location of media files and related thumbnail flavor settings
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
+			<xs:element maxOccurs="unbounded" minOccurs="0" ref="item-extension"/>
+
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="T_media">
+		<xs:sequence>
+			<xs:element maxOccurs="1" minOccurs="1" name="mediaType" type="KalturaMediaType">
+				<xs:annotation>
+					<xs:documentation>
+						Specifies the entry media type.<br/>
+						Only VIDEO (=1), AUDIO (=5) and IMAGE (=2) are currently supported for XML-based ingestion.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<!--
+			Not supported yet
+			<xs:element ref="playlists" minOccurs="0" maxOccurs="1" >
+				<xs:annotation>
+					<xs:documentation>Used to define the playlists of the media, currently not supported</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			-->
+
+			<xs:element maxOccurs="unbounded" minOccurs="0" ref="media-extension"/>
+
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="T_serverFileContentResource">
+		<xs:choice maxOccurs="1" minOccurs="0">
+			<xs:element maxOccurs="1" minOccurs="1" name="fileSize" type="xs:int">
+				<xs:annotation>
+					<xs:documentation>
+						The expected size of the file.<br/>
+						Used for validation.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element maxOccurs="1" minOccurs="1" name="fileChecksum">
+				<xs:annotation>
+					<xs:documentation>
+						The expected checksum of the file.<br/>
+						Used for validation.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute default="md5" name="type" use="optional">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="md5"/>
+										<xs:enumeration value="sha1"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="filePath" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>The full path of the file on the Kaltura-hosted server</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="T_urlContentResource">
+		<xs:attribute ref="url" use="required">
+			<xs:annotation>
+				<xs:documentation>The URL location of the file</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="T_sshUrlContentResource">
+		<xs:sequence>
+			<xs:element maxOccurs="1" minOccurs="1" name="privateKey" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>The SSH private key string</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element maxOccurs="1" minOccurs="1" name="publicKey" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>The SSH public key string</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute ref="url" use="required">
+			<xs:annotation>
+				<xs:documentation>The URL location of the file</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="keyPassphrase" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>The SSH key pass phrase</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="T_remoteStorageContentResource">
+		<xs:choice maxOccurs="1" minOccurs="1">
+			<xs:element maxOccurs="1" minOccurs="1" name="storageProfileId" type="xs:int">
+				<xs:annotation>
+					<xs:documentation>
+						The identifier of the remote storage profile used as the source of content ingestion. Only links to the files on this remote storage are set from the entry, without actually uploading content to Kaltura. (The remote storage must be defined in Kaltura.)
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element maxOccurs="1" minOccurs="1" name="storageProfile">
+				<xs:annotation>
+					<xs:documentation>
+						The system name of the remote storage profile used as the source of content ingestion. Only links to the files on this remote storage are set from the entry, without actually uploading content to Kaltura. (The remote storage must be defined in Kaltura.)
+					</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="120"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="url" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>The relative path of the file from the remote storage base directory</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="T_remoteStorageContentResources">
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" minOccurs="1" ref="remoteStorageContentResource">
+				<xs:annotation>
+					<xs:documentation>
+						Specifies that the content location is a path within a single remote storage defined in Kaltura.<br/> 
+						Using this option, only a link to the content location is set from the entry, without actually uploading content to Kaltura.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="T_entryContentResource">
+		<xs:choice maxOccurs="1" minOccurs="0">
+			<xs:element maxOccurs="1" minOccurs="1" name="flavorParamsId" type="xs:int">
+				<xs:annotation>
+					<xs:documentation>The flavor params identifier of the content origin entry</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element maxOccurs="1" minOccurs="1" name="flavorParams">
+				<xs:annotation>
+					<xs:documentation>The flavor params system name of the content origin entry</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="120"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:choice>
+		<xs:attribute name="entryId" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>The identifier of the entry that is the origin of the content</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="T_assetContentResource">
+		<xs:attribute name="assetId" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>The identifier of  the asset that is the origin of the content</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="T_assetInfo">
+		<xs:attribute name="language" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>specifying the language of the asset.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="label" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>UI label specifications marking the language (will affect how the language is displayed on the multi audio selector on the player)
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="T_stream">
+		<xs:attribute name="type" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>stream type</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="trackIndex" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>int specifying the stream location(s) in video file</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="language" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>specifying the language of the audio stream. If not present - mp4 tagging will be assumed</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="channelIndex" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>the stream channel to select the audio from</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="label" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>UI label specifications marking the language (will affect how the language is displayed on the multi audio selector on the player)</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="channelLayout" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>specifying the role of the specific channel</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="T_streams">
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" minOccurs="1" ref="stream">
+				<xs:annotation>
+					<xs:documentation>streams composed of 1..n stream elements</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="T_content">
+		<xs:sequence>
+			<xs:element maxOccurs="1" minOccurs="0" ref="tags">
+				<xs:annotation>
+					<xs:documentation>
+						Specifies specific tags for the ingested flavor asset.<br/> 
+						Tags are used mostly to set the flavor as suitable for a specific delivery option or device. For example: web, mobile, html5,  iphone, ipad, mbr (mbr is used for setting the flavor to an adaptive bit-rate delivery)<br/>
+						When the tags element is not set, the tags assigned to the transcoding flavor are used. In any case, tags from this element will be appended to the flavor params tags already set in the system.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:choice maxOccurs="1" minOccurs="1">
+				<xs:element maxOccurs="1" minOccurs="1" ref="serverFileContentResource">
+					<xs:annotation>
+						<xs:documentation>
+							Specifies that the content location is on a Kaltura-hosted server.<br/>
+							By default, this option is not available to Kaltura partners.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element maxOccurs="1" minOccurs="1" ref="urlContentResource">
+					<xs:annotation>
+						<xs:documentation>
+							Specifies that the content location is a URL (http/ftp)
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element maxOccurs="1" minOccurs="1" ref="sshUrlContentResource">
+					<xs:annotation>
+						<xs:documentation>
+							Specifies that the content location is a URL (scp/sftp)
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element maxOccurs="1" minOccurs="1" ref="remoteStorageContentResource">
+					<xs:annotation>
+						<xs:documentation>
+							Specifies that the content location is a path within a remote storage defined in Kaltura.<br/> 
+							Using this option, only a link to the content location is set from the entry, without actually uploading content to Kaltura.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element maxOccurs="1" minOccurs="1" ref="remoteStorageContentResources">
+					<xs:annotation>
+						<xs:documentation>
+							Specifies that content is located within several remote storages defined in Kaltura.<br/> 
+							Using this option, only links to the content locations are set from the entry, without actually uploading content to Kaltura.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element maxOccurs="1" minOccurs="1" ref="entryContentResource">
+					<xs:annotation>
+						<xs:documentation>
+							Specifies that the source of content ingestion is the content of an existing Kaltura entry
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element maxOccurs="1" minOccurs="1" ref="assetContentResource">
+					<xs:annotation>
+						<xs:documentation>
+							Specifies that the source of content ingestion is a specific asset of an existing Kaltura entry
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element maxOccurs="1" minOccurs="1" ref="contentResource-extension"/>
+				<xs:element maxOccurs="1" minOccurs="1" ref="assetInfo">
+					<xs:annotation>
+						<xs:documentation>
+							Holds assetInfo elements
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+
+
+			<xs:element maxOccurs="unbounded" minOccurs="0" ref="content-extension"/>
+			<xs:element maxOccurs="1" minOccurs="0" ref="streams">
+				<xs:annotation>
+					<xs:documentation>
+						Holds stream elements that specifies instructions to the transcoding process
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="flavorParamsId" type="xs:int" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					The identifier of the flavor params to be associated with the media/flavor asset. This is the flavor params identifier across partner entries. The identifier can be used to filter content.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="flavorParams" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					The system name of the flavor params to be associated with the media/flavor asset.<br/>
+					This is the flavor params identifier across partner entries. The identifier can be used to filter content.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value="120"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="assetId" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					The identifier of the asset to be updated with the media/flavor asset.<br/>
+					Used only for updating an existing media/flavor asset.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="T_contentAssets">
+		<xs:sequence>
+			<xs:element maxOccurs="1" minOccurs="0" name="action">
+				<xs:annotation>
+					<xs:documentation>
+						The action to apply from the item element:<br/>
+						Update - Update existing assets for entry<br/>
+						replace - replace an existing assets for entry
+					</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="update"/>
+						<xs:enumeration value="replace"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element maxOccurs="unbounded" minOccurs="0" ref="content">
+				<xs:annotation>
+					<xs:documentation>All Content Assets</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="T_thumbnail">
+		<xs:sequence>
+			<xs:element maxOccurs="1" minOccurs="0" ref="tags">
+				<xs:annotation>
+					<xs:documentation>
+						Specifies specific user tags to set for the thumbnail asset
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:choice maxOccurs="1" minOccurs="1">
+				<xs:element maxOccurs="1" minOccurs="1" ref="serverFileContentResource">
+					<xs:annotation>
+						<xs:documentation>
+							Specifies that the thumbnail location is on a Kaltura-hosted server.<br/>
+							By default, this option is not available to Kaltura partners.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element maxOccurs="1" minOccurs="1" ref="urlContentResource">
+					<xs:annotation>
+						<xs:documentation>
+							Specifies that the thumbnail location is a URL (http/ftp)
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element maxOccurs="1" minOccurs="1" ref="sshUrlContentResource">
+					<xs:annotation>
+						<xs:documentation>
+							Specifies that the content location is a URL (scp/sftp)
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element maxOccurs="1" minOccurs="1" ref="remoteStorageContentResource">
+					<xs:annotation>
+						<xs:documentation>
+							Specifies that the thumbnail location is a path within a remote storage defined in Kaltura.<br/>
+							Using this option, only a link to the thumbnail location is set from the entry, without actually uploading thumbnails to Kaltura.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element maxOccurs="1" minOccurs="1" ref="remoteStorageContentResources">
+					<xs:annotation>
+						<xs:documentation>
+							Specifies that the thumbnail is located within several remote storages defined in Kaltura.<br/> 
+							Using this option, only links to the thumbnail locations are set from the entry, without actually uploading thumbnails to Kaltura.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element maxOccurs="1" minOccurs="1" ref="entryContentResource">
+					<xs:annotation>
+						<xs:documentation>
+							Specifies that the source of thumbnail ingestion is an existing Kaltura entry
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element maxOccurs="1" minOccurs="1" ref="assetContentResource">
+					<xs:annotation>
+						<xs:documentation>
+							Specifies that the source of thumbnail ingestion is a specific asset of an existing Kaltura entry
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element maxOccurs="1" minOccurs="1" ref="contentResource-extension"/>
+			</xs:choice>
+
+			<xs:element maxOccurs="unbounded" minOccurs="0" ref="thumbnail-extension"/>
+
+		</xs:sequence>
+		<xs:attribute name="assetId" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					The identifier of the asset to be updated with the resource. Used only for updating an existing thumbnail.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute default="false" name="isDefault" type="xs:boolean" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					Specifies whether this thumbnail is set as the default thumbnail of the entry.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="thumbParamsId" type="xs:int" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					The identifier of the thumb params to be associated with this thumbnail asset.  This is the thumbnail params identifier across partner entries. The identifier can be used to filter content.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="thumbParams" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					The thumb params system name to be associated with this thumbnail asset. This is the thumbnail params identifier across partner entries. The identifier can be used to filter content.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value="120"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="T_thumbnails">
+		<xs:sequence>
+			<xs:element maxOccurs="1" minOccurs="0" name="action">
+				<xs:annotation>
+					<xs:documentation>
+						The action to apply from the item element:<br/>
+						Update - Update existing thumbnails<br/>
+						Replace - Replace all thumbnails
+					</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="update"/>
+						<xs:enumeration value="replace"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element maxOccurs="unbounded" minOccurs="0" ref="thumbnail">
+				<xs:annotation>
+					<xs:documentation>All Thumbnails Assets</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="T_url">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(([hH][tT][tT][pP][sS]?)|(([fF][tT][pP])|([sS][fF][tT][pP])|([sS][cC][pP])))://?(([ 0-9a-zA-Z_!~*'().&amp;=+$%-\[\]]+)?(:[0-9a-zA-Z_!~*'().&amp;=+$%-\[\]]+@)?)?(([0-9]{1,3}\.){3}[0-9]{1,3}|([0-9a-zA-Z_!~*'()-]+\.)*)(:[0-9]{1,4})?((/?)|(/[ 0-9a-zA-Z_!~*'().;?:@&amp;=+$,%#-\[\]]+)+)"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="T_entitledUsers">
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="user" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Specifies a single user to set for an entry's co-publishers</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="T_tags">
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="tag" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Specifies a single tag to set for a related object</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="T_categories">
+		<xs:choice>
+			<xs:element maxOccurs="32" minOccurs="0" name="category" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Specifies a single category assigned to an entry. Use the &gt; character (`&amp;gt;`) to indicate the position of the category in the category tree hierarchy</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element maxOccurs="32" minOccurs="0" name="categoryId" type="xs:int">
+				<xs:annotation>
+					<xs:documentation>Specifies a single category ID assigned to an entry. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="T_pluginReplacementOptions">
+		<xs:sequence/>
+	</xs:complexType>
+	<xs:complexType name="T_pluginReplacementOptionsItem" abstract="true">
+		<xs:sequence/>
+	</xs:complexType>
+	<xs:element name="mrss" type="T_mrss">
+		<xs:annotation>
+			<xs:documentation>A wrapper element that holds the XML structure</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<mrss version="1.0">
+						<channel>
+							<item>...</item>
+							<item>...</item>
+							<item>...</item>
+						</channel>
+					</mrss>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="channel" type="T_channel">
+		<xs:annotation>
+			<xs:documentation>A wrapper element that holds multiple item elements</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<mrss version="1.0">
+						<channel>
+							<item>...</item>
+							<item>...</item>
+							<item>...</item>
+						</channel>
+					</mrss>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="item" type="T_item">
+		<xs:annotation>
+			<xs:documentation>A single entry wrapper element</xs:documentation>
+			<xs:appinfo>
+				<example title="XML Example 1: Adding a new media entry: Adding source media file and a default thumbnail">
+					<item>
+						<action>add</action>
+						<type>1</type>
+						<licenseType>-1</licenseType>
+						<userId>myUserId</userId>
+						<name>my entry name</name>
+						<description>my entry free text description</description>
+						<tags>
+							<tag>tag1</tag>
+							<tag>tag2</tag>
+						</tags>
+						<categories>
+							<category>examples&gt;example1</category>
+							<category>examples&gt;example2</category>
+						</categories>
+						<conversionProfile>MY_TRANSCODING_PROFILE_SYSTEM_NAME</conversionProfile>
+						<startDate>2011-05-05T00:00:00</startDate>
+						<endDate>2011-05-19T00:00:00</endDate>
+						<media>
+							<mediaType>1</mediaType> 
+						</media>
+						<contentAssets>...</contentAssets>
+						<thumbnails>...</thumbnails>
+					</item>
+				</example>
+				<example title="XML Example 2: Adding a new media entry: Adding multiple previously transcoded files as flavors and multiple thumbnails">
+					<item>
+						<action>add</action>
+						<type>1</type>
+						<licenseType>-1</licenseType>
+						<userId>myUserId</userId>
+						<name>my entry name</name>
+						<description>my entry free text description</description>
+						<tags>
+							<tag>tag1</tag>
+							<tag>tag2</tag>
+						</tags>
+						<categories>
+							<category>examples&gt;example1</category>
+							<category>examples&gt;example2</category>
+						</categories>
+						<conversionProfile>MY_TRANSCODING_PROFILE_SYSTEM_NAME</conversionProfile>
+						<startDate>2011-05-05T00:00:00</startDate>
+						<endDate>2011-05-19T00:00:00</endDate>
+						<media>
+							<mediaType>1</mediaType> 
+						</media>
+						<contentAssets>
+							<content flavorParamsId="0">...</content>
+							<content flavorParamsId="1">...</content>
+							<content flavorParamsId="2">...</content>
+						</contentAssets>
+						<thumbnails>
+							<thumbnail isDefault="true">...</thumbnail>
+							<thumbnail>...</thumbnail>
+							<thumbnail>...</thumbnail>
+						</thumbnails>
+					</item>
+				</example>
+				<example title="XML Example 3: Updating an existing media entry: Updating both metadata and media">
+					<item>
+						<action>update</action>
+						<entryId>{entry id}</entryId>
+						<userId>UpdatedUserId</userId>
+						<name>updated entry name</name>
+						<description>updated entry description</description>
+						<tags>
+							<tag>tag3</tag>
+							<tag>tag4</tag>
+						</tags>
+						<categories>
+							<category>examples&gt;example3</category>
+							<category>examples&gt;example4</category>
+						</categories>
+						<startDate>2011-05-05T00:00:00</startDate>
+						<endDate>2011-05-19T00:00:00</endDate>
+						<contentAssets>...</contentAssets>
+						<thumbnails>...</thumbnails>
+					</item>
+				</example>
+				<example title="XML Example 4: Deleting an existing entry">
+					<item>
+						<action>delete</action>
+						<entryId>{entry id}</entryId>
+					</item>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="media" type="T_media">
+		<xs:annotation>
+			<xs:documentation>Media related information</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<item>
+						<action>add</action>
+						<type>1</type>
+						<media>
+							<mediaType>1</mediaType> 
+						</media>
+					</item>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="contentAssets" type="T_contentAssets">
+		<xs:annotation>
+			<xs:documentation>All content assets</xs:documentation>
+			<xs:appinfo>
+			<example>
+				<item>
+					<action>add</action>
+					<type>1</type>
+					<media>...</media>
+					<contentAssets>
+						<content>...</content>
+						<content>...</content>
+						<content>...</content>
+					</contentAssets>
+				</item>
+			</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="assetInfo" type="T_assetInfo">
+		<xs:annotation>
+			<xs:documentation>Specifies updating or adding info to asset</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<item>
+						<action>add</action>
+						<type>1</type>
+						<media>...</media>
+						<contentAssets>
+							<content>
+								<assetInfo language="eng" label="English"/>
+							</content>
+						</contentAssets>
+					</item>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="content" type="T_content">
+		<xs:annotation>
+			<xs:documentation>Specifies media/flavor asset information, such as location of media files to upload, type of ingestion, and related transcoding flavor settings</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<item>
+						<action>add</action>
+						<type>1</type>
+						<media>...</media>
+						<contentAssets>
+							<content> 
+								<tags>
+									<tag>web</tag>
+									<tag>mbr</tag>
+								</tags>
+								<urlContentResource>...</urlContentResource>
+							</content>
+						</contentAssets>
+					</item>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="streams" type="T_streams">
+		<xs:annotation>
+			<xs:documentation>Holds stream elements that specifies instructions to the transcoding process</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<item>
+						<action>add</action>
+						<type>1</type>
+						<media>...</media>
+						<contentAssets>
+							<content>
+								<streams>...</streams>
+							</content>
+						</contentAssets>
+					</item>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="stream" type="T_stream">
+		<xs:annotation>
+			<xs:documentation>Specifies instructions to the transcoding process on how to handle the multiple audio tracks</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<item>
+						<action>add</action>
+						<type>1</type>
+						<media>...</media>
+						<contentAssets>
+							<content>
+								<streams>
+									<stream type="audio" trackIndex="1" language="eng" label="something"/>
+								</streams>
+							</content>
+						</contentAssets>
+					</item>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="thumbnails" type="T_thumbnails">
+		<xs:annotation>
+			<xs:documentation>All thumbnail assets</xs:documentation>
+			<xs:appinfo>
+			<example>
+				<item>
+					<action>add</action>
+					<type>1</type>
+					<media>...</media>
+					<contentAssets>...</contentAssets>
+					<thumbnails>
+						<thumbnail>...</thumbnail>
+					</thumbnails>
+				</item>
+			</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="thumbnail" type="T_thumbnail">
+		<xs:annotation>
+			<xs:documentation>Specifies thumbnail asset information, such as location of image files to upload, type of ingestion, and related thumbnail flavor settings</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<item>
+						<action>add</action>
+						<type>1</type>
+						<media>...</media>
+						<contentAssets>...</contentAssets>
+						<thumbnails>
+							<thumbnail isDefault="true">
+								<urlContentResource>...</urlContentResource>
+							</thumbnail>
+						</thumbnails>
+					</item>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	<xs:attribute name="url" type="T_url"/>
+	<xs:element name="contentResource-extension"/>
+	<xs:element name="serverFileContentResource" type="T_serverFileContentResource">
+		<xs:annotation>
+			<xs:documentation>Specifies that the location of content ingestion is on a Kaltura-hosted server. By default, this option is not available to Kaltura partners.</xs:documentation>
+			<xs:appinfo>
+				<example title="XML Example 1: Adding content from a Kaltura server: Using file size validation">
+					<item>
+						<action>add</action>
+						<type>1</type>
+						<media>...</media>
+						<contentAssets>
+							<content>
+								<serverFileContentResource filePath="/server/external/disc/path/video.mp4">
+									<fileSize>453453344</fileSize>
+								</serverFileContentResource>
+							</content>
+						</contentAssets>
+						<thumbnails>...</thumbnails>
+					</item>
+				</example>
+				<example title="XML Example 2: Adding content from a Kaltura server: Using checksum validation">
+					<item>
+						<action>add</action>
+						<type>1</type>
+						<media>...</media>
+						<contentAssets>
+							<content>
+								<serverFileContentResource filePath="/server/external/disc/path/file.jpg">
+									<fileChecksum type="md5">sdfsjodf90sfsdfzfasdfwrg34</fileChecksum>
+								</serverFileContentResource>
+							</content>
+						</contentAssets>
+						<thumbnails>...</thumbnails>
+					</item>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="urlContentResource" type="T_urlContentResource">
+		<xs:annotation>
+			<xs:documentation>Specifies that the location of content ingestion is a URL (http/ftp)</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<item>
+						<action>add</action>
+						<type>1</type>
+						<media>...</media>
+						<contentAssets>
+							<content>
+								<urlContentResource url="http://my.domain/path/video.mp4"/>
+							</content>
+						</contentAssets>
+						<thumbnails>
+							<thumbnail>
+								<urlContentResource url="http://my.domain/path/thumb.jpg"/>
+							</thumbnail>
+						</thumbnails>
+					</item>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="sshUrlContentResource" type="T_sshUrlContentResource">
+		<xs:annotation>
+			<xs:documentation>Specifies that the location of content ingestion is a URL (scp/sftp)</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<item>
+						<action>add</action>
+						<type>1</type>
+						<media>...</media>
+						<contentAssets>
+							<content>
+								<sshUrlContentResource url="sftp://user@my.domain/path/video.mp4">
+									<privateKey>-----BEGIN RSA PRIVATE KEY-----
+MIIEoQIBAAKCAQEAxVOIocT3q+aQKUvs53LOnxokoJUtZXKHL+LArNl4a3dhZ8wY
+ZPGwodSydB/jo4aHKZztA0YCPd3LOnxoko3LOnxokoJUtCM/DdVGQfb/0+PpWzPe
+KIGdzIl3LOoJUtfOAMS6nC3LOnxJUt33LOnxnxokoJUtXN1ej06CYPR5ZfwKFFIO
+tK1yWx3LOnxokoJUtNRSdEi</privateKey>
+									<publicKey>ssh-rsa AAAAB3NzaC1yc2l4a3dhZ8wYEAAxVOIocT3q+aQKUvs5omvVdPl4a3dhZ8wY+LArTNl4a3dhZ8wl4a3dhZ8wY/jo4aHKZztA0YCPd3LOnxokoJUtACM/Dm0wq67dVGQfb/0+PpWzPeCKIGdEEPAzIlfOAMS6nC3Hy3ydBFbi5IJtbGmXN1ej06CYPR5ZfwKAD8FFIOa7dMYtK1yWxNRSdEih00Z8vEiiAkoEHDatRMKVbluqdPVTleQzgqnYL/45l4a3dhZ8wYnbItnQYQgyxGbYgmMMVGGZsZnpRhRtvhAUOsQoixRC14sKHsl4a3dhZ8wY/l4a3dhZ8wY+qbHEaDdl4a3dhZ8wY/QWnhlhKQwIzXl4a3dhZ8wY== user@my.domain</publicKey>
+								</sshUrlContentResource>
+							</content>
+						</contentAssets>
+						<thumbnails>
+							<thumbnail>
+								<sshUrlContentResource url="scp://user@my.domain/path/thumb.jpg">
+									<privateKey>-----BEGIN RSA PRIVATE KEY-----
+MIIEoQIBAAKCAQEAxVOIocT3q+aQKUvs53LOnxokoJUtZXKHL+LArNl4a3dhZ8wY
+ZPGwodSydB/jo4aHKZztA0YCPd3LOnxoko3LOnxokoJUtCM/DdVGQfb/0+PpWzPe
+KIGdzIl3LOoJUtfOAMS6nC3LOnxJUt33LOnxnxokoJUtXN1ej06CYPR5ZfwKFFIO
+tK1yWx3LOnxokoJUtNRSdEi</privateKey>
+									<publicKey>ssh-rsa AAAAB3NzaC1yc2l4a3dhZ8wYEAAxVOIocT3q+aQKUvs5omvVdPl4a3dhZ8wY+LArTNl4a3dhZ8wl4a3dhZ8wY/jo4aHKZztA0YCPd3LOnxokoJUtACM/Dm0wq67dVGQfb/0+PpWzPeCKIGdEEPAzIlfOAMS6nC3Hy3ydBFbi5IJtbGmXN1ej06CYPR5ZfwKAD8FFIOa7dMYtK1yWxNRSdEih00Z8vEiiAkoEHDatRMKVbluqdPVTleQzgqnYL/45l4a3dhZ8wYnbItnQYQgyxGbYgmMMVGGZsZnpRhRtvhAUOsQoixRC14sKHsl4a3dhZ8wY/l4a3dhZ8wY+qbHEaDdl4a3dhZ8wY/QWnhlhKQwIzXl4a3dhZ8wY== user@my.domain</publicKey>
+								</sshUrlContentResource>
+							</thumbnail>
+						</thumbnails>
+					</item>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="remoteStorageContentResource" type="T_remoteStorageContentResource">
+		<xs:annotation>
+			<xs:documentation>Specifies that the location of content ingestion is a path within a remote storage defined in Kaltura. Using this option, only a link to the content location is set from the entry, without actually uploading content to Kaltura.</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<item>
+						<action>add</action>
+						<type>1</type>
+						<media>...</media>
+						<contentAssets>
+							<content>
+								<remoteStorageContentResource url="path_from_base_dir/video.mp4">
+									<storageProfile>MY_STORAGE_PROFILE_SYSTEM_NAME</storageProfile>
+								</remoteStorageContentResource>
+							</content>
+						</contentAssets>
+						<thumbnails>
+							<thumbnail>
+								<remoteStorageContentResource url="path_from_base_dir/thumb.jpg">
+									<storageProfile>MY_STORAGE_PROFILE_SYSTEM_NAME</storageProfile>
+								</remoteStorageContentResource>
+							</thumbnail>
+						</thumbnails>
+					</item>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="remoteStorageContentResources" type="T_remoteStorageContentResources">
+		<xs:annotation>
+			<xs:documentation>Sets the location of content ingestion within several remote storages defined in Kaltura. Using this option, only links to the content location are set from the entry, without actually uploading content to Kaltura.</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<item>
+						<action>add</action>
+						<type>1</type>
+						<media>...</media>
+						<contentAssets>
+							<content>
+								<remoteStorageContentResources>
+									<remoteStorageContentResource url="path_from_base_dir/video.mp4">
+										<storageProfile>MY_STORAGE_PROFILE_SYSTEM_NAME_1</storageProfile>
+									</remoteStorageContentResource>
+									<remoteStorageContentResource url="path_from_base_dir/video.mp4">
+										<storageProfile>MY_STORAGE_PROFILE_SYSTEM_NAME_2</storageProfile>
+									</remoteStorageContentResource>
+								</remoteStorageContentResources>
+							</content>
+						</contentAssets>
+					</item>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="entryContentResource" type="T_entryContentResource">
+		<xs:annotation>
+			<xs:documentation>Specifies that the source of content ingestion is the content of an existing Kaltura entry</xs:documentation>
+			<xs:appinfo>
+				<example title="XML Example: Adding flavor asset from an existing entry and associating it with a specific flavor params in a target entry">
+					<item>
+						<action>add</action>
+						<type>1</type>
+						<media>...</media>
+						<contentAssets>
+							<content>
+								<entryContentResource entryId="{origin entry id}">
+									<flavorParams>BASIC_SMALL</flavorParams>
+								</entryContentResource>
+							</content>
+						</contentAssets>
+					</item>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="assetContentResource" type="T_assetContentResource">
+		<xs:annotation>
+			<xs:documentation>Specifies that the source of content ingestion is a specific asset of an existing Kaltura entry</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<item>
+						<action>add</action>
+						<type>1</type>
+						<media>...</media>
+						<contentAssets>
+							<content>
+								<assetContentResource assetId="{existing asset id}"/>
+							</content>
+						</contentAssets>
+					</item>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="entitledUsersEdit" type="T_entitledUsers">
+		<xs:annotation>
+			<xs:documentation>Co-editors</xs:documentation>
+			<xs:appinfo>
+				<example title="XML Example: Entry Co-editors">
+					<item>
+						<action>add</action>
+						<entitledUsersEdit>
+							<user>user1</user>
+							<user>user2</user>
+						</entitledUsersEdit>
+						<media>...</media>
+						<contentAssets>...</contentAssets>
+					</item>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="entitledUsersPublish" type="T_entitledUsers">
+		<xs:annotation>
+			<xs:documentation>Co-publishors</xs:documentation>
+			<xs:appinfo>
+				<example title="XML Example: Entry Co-publishors">
+					<item>
+						<action>add</action>
+						<entitledUsersPublish>
+							<user>user1</user>
+							<user>user2</user>
+						</entitledUsersPublish>
+						<media>...</media>
+						<contentAssets>...</contentAssets>
+					</item>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="entitledUsersView" type="T_entitledUsers">
+		<xs:annotation>
+			<xs:documentation>Co-viewers</xs:documentation>
+			<xs:appinfo>
+				<example title="XML Example: Entry Co-viewers">
+					<item>
+						<action>add</action>
+						<entitledUsersView>
+							<user>user1</user>
+							<user>user2</user>
+						</entitledUsersView>
+						<media>...</media>
+						<contentAssets>...</contentAssets>
+					</item>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="tags" type="T_tags">
+		<xs:annotation>
+			<xs:documentation>Free text tags</xs:documentation>
+			<xs:appinfo>
+				<example title="XML Example: Entry tags">
+					<item>
+						<action>add</action>
+						<tags>
+							<tag>tag1</tag>
+							<tag>tag2</tag>
+						</tags>
+						<media>...</media>
+						<contentAssets>...</contentAssets>
+					</item>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="categories" type="T_categories">
+		<xs:annotation>
+			<xs:documentation>Entry`s category assignment.</xs:documentation>
+			<xs:appinfo>
+				<example title="XML Example: Entry categories">
+					<item>
+						<action>add</action>
+						<categories>
+							<category>examples&gt;example1</category>
+							<category>examples&gt;example2</category>
+						</categories>
+						<media>...</media>
+						<contentAssets>...</contentAssets>
+					</item>
+				</example>
+				<example title="XML Example: Entry categories IDs">
+				    <item>
+					<action>add</action>
+					<categories>
+					    <categoryId>1234</categoryId>
+					    <categoryId>5678</categoryId>
+					</categories>
+					<media>...</media>
+					<contentAssets>...</contentAssets>
+				    </item>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="mrss-extension"/>
+	<xs:element name="channel-extension"/>
+	<xs:element name="item-extension"/>
+	<xs:element name="media-extension"/>
+	<xs:element name="mix-extension"/>
+	<xs:element name="playlist-extension"/>
+	<xs:element name="data-extension"/>
+	<xs:element name="liveStream-extension"/>
+	<xs:element name="document-extension"/>
+	<xs:element name="content-extension"/>
+	<xs:element name="thumbnail-extension"/>
+		
+	<!-- adCuePointBulkUploadXml -->
+	
+	<xs:complexType name="T_scene_adCuePointBulkUploadXml">
+		<xs:complexContent>
+			<xs:extension base="T_scene">
+				<xs:sequence>
+					<xs:element name="sceneEndTime" minOccurs="0" maxOccurs="1" type="xs:time">
+						<xs:annotation>
+							<xs:documentation>A cue point that marks the end time</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="sceneTitle" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Text that defines the title</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:maxLength value="250"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="sourceUrl" minOccurs="0" maxOccurs="1" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>The URL of the ad XML</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="adType" minOccurs="1" maxOccurs="1" type="KalturaAdType">
+						<xs:annotation>
+							<xs:documentation>Indicates the ad type</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="protocolType" minOccurs="1" maxOccurs="1" type="KalturaAdProtocolType">
+						<xs:annotation>
+							<xs:documentation>Indicates the ad protocol type</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					
+					<xs:element ref="scene-extension" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:element name="scene-ad-cue-point" type="T_scene_adCuePointBulkUploadXml" substitutionGroup="scene">
+		<xs:annotation>
+			<xs:documentation>A single advertisement cue point element</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<scene-ad-cue-point systemName="MY_AD_CUE_POINT_SYSTEM_NAME">
+						<sceneStartTime>00:00:05</sceneStartTime>
+						<tags>
+							<tag>tag1</tag>
+							<tag>tag2</tag>
+						</tags>
+						<sceneTitle>my ad title</sceneTitle>
+						<sourceUrl>http://source.to.my/ad.xml</sourceUrl>
+						<adType>1</adType>
+						<protocolType>1</protocolType>
+					</scene-ad-cue-point>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+		
+		
+	<!-- annotationBulkUploadXml -->
+	
+	<xs:complexType name="T_scene_annotationBulkUploadXml">
+		<xs:complexContent>
+			<xs:extension base="T_scene">
+				<xs:sequence>
+					<xs:element name="sceneEndTime" minOccurs="1" maxOccurs="1" type="xs:time">
+						<xs:annotation>
+							<xs:documentation>A cue point that marks the end time</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="sceneText" minOccurs="0" maxOccurs="1" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>A free text description</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:choice minOccurs="0" maxOccurs="1">
+						<xs:element name="parent" minOccurs="1" maxOccurs="1">
+							<xs:annotation>
+								<xs:documentation>The system name of a parent annotation</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="120"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="parentId" minOccurs="1" maxOccurs="1">
+							<xs:annotation>
+								<xs:documentation>The identifier of a parent annotation</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="250"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:choice>
+					
+					<xs:element ref="scene-extension" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:element name="scene-annotation" type="T_scene_annotationBulkUploadXml" substitutionGroup="scene">
+		<xs:annotation>
+			<xs:documentation>A single annotation cue point element</xs:documentation>
+			<xs:appinfo>
+				<example title="XML Example 1: Single annotation">
+					<scene-annotation entryId="{entry id}">
+						<sceneStartTime>00:00:05.3</sceneStartTime>
+						<tags>
+							<tag>tag1</tag>
+							<tag>tag2</tag>
+						</tags>
+						<sceneEndTime>00:00:10</sceneEndTime>
+						<sceneText>my annotation</sceneText>
+					</scene-annotation>
+				</example>
+				<example title="Example 2: Multiple related annotations">
+					<scene-annotation entryId="{entry id}" systemName="MY_ANNOTATION_PARENT_SYSTEM_NAME">
+						<sceneStartTime>00:00:05.3</sceneStartTime>
+						<tags>
+							<tag>tag1</tag>
+							<tag>tag2</tag>
+						</tags>
+						<sceneEndTime>00:00:10</sceneEndTime>
+						<sceneText>my annotation parent</sceneText>
+					</scene-annotation>
+					<scene-annotation entryId="{entry id}">
+						<sceneStartTime>00:00:05.3</sceneStartTime>
+						<tags>
+							<tag>tag3</tag>
+							<tag>tag4</tag>
+						</tags>
+						<sceneEndTime>00:00:10</sceneEndTime>
+						<sceneText>my annotation child</sceneText>
+						<parent>MY_ANNOTATION_PARENT_SYSTEM_NAME</parent>
+					</scene-annotation>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+		
+		
+	<!-- attachmentBulkUploadXml -->
+	
+	<xs:complexType name="T_attachments">
+		<xs:sequence>
+			<xs:element name="action" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						The action to apply:<br/>
+						Update - Update existing attachment<br/>
+					</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="update" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="attachment" maxOccurs="unbounded" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>All attachment elements</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="T_attachment">
+		<xs:sequence>
+			<xs:element name="tags" minOccurs="0" maxOccurs="1" type="T_tags">
+				<xs:annotation>
+					<xs:documentation>Specifies specific tags you want to set for the flavor asset</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:choice minOccurs="1" maxOccurs="1">
+				<xs:element ref="serverFileContentResource" minOccurs="1" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Specifies that content ingestion location is on a Kaltura hosted server</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="urlContentResource" minOccurs="1" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Specifies that content file location is a URL (http,ftp)</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="remoteStorageContentResource" minOccurs="1" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Specifies that content file location is a path within a Kaltura defined remote storage</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="remoteStorageContentResources" minOccurs="1" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Set of content files within several Kaltura defined remote storages</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="entryContentResource" minOccurs="1" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Specifies that content is a Kaltura entry</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="assetContentResource" minOccurs="1" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Specifies that content is a Kaltura asset</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="contentResource-extension" minOccurs="1" maxOccurs="1" />
+			</xs:choice>
+			<xs:element name="filename" minOccurs="0" maxOccurs="1" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Attachment asset file name</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="title" minOccurs="0" maxOccurs="1" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Attachment asset title</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Attachment asset free text description</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="attachment-extension" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		
+		<xs:attribute name="attachmentAssetId" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>The asset id to be updated with this resource used only for update</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="format" type="KalturaAttachmentType" use="optional">
+			<xs:annotation>
+				<xs:documentation>Attachment asset file format</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+						
+	</xs:complexType>
+	
+	<xs:element name="attachment-extension" />
+		<xs:element name="attachments" type="T_attachments" substitutionGroup="item-extension">
+		<xs:annotation>
+			<xs:documentation>All attachments elements</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<attachments>
+						<action>update</action>
+						<attachment>...</attachment>
+						<attachment>...</attachment>
+						<attachment>...</attachment>
+					</attachments>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="attachment" type="T_attachment" substitutionGroup="item-extension">
+		<xs:annotation>
+			<xs:documentation>Attachment asset element</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<attachment format="1" attachmentAssetId="{asset id}">
+						<tags>
+							<tag>example</tag>
+							<tag>my_tag</tag>
+						</tags>
+						<urlContentResource url="http://my.domain/path/file.txt"/>
+						<filename>my_file_name.txt</filename>
+						<title>my attachment asset title</title>
+						<description>my attachment asset free text description</description>
+					</attachment>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+		
+		
+	<!-- captionBulkUploadXml -->
+	
+		<xs:complexType name="T_subTitles">
+		<xs:sequence>
+			<xs:element name="action" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						The action to apply:<br/>
+						Update - Update existing subtitle(s). Requires "captionAssetId", "captionParamsId" or "captionParams"<br/>
+						Replace - If no subTitle is provided, delete all subtitles. When subTitle is provided, requires "lang" ("tags" are optional). Replace only subtitles with the given language. If "tags" are also provided, replace only subtitles with the given language and tags.
+						Delete - If no subTitle is provided, delete all subtitles. When subTitle is provided, requires "captionAssetId" or "lang" ("tags" are optional) . When "captionAssetId" is provided, delete the specific subtitle. When "lang" is provided, delete only subtitles with the given language. If "tags" are also provided, replace only subtitles with the given language and tags.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="update"/>
+						<xs:enumeration value="replace"/>
+						<xs:enumeration value="delete"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="subTitle" maxOccurs="unbounded" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>All subTitles elements</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="T_subTitle">
+		<xs:sequence>
+			<xs:element name="tags" minOccurs="1" maxOccurs="1" type="T_tags">
+				<xs:annotation>
+					<xs:documentation>Specifies specific tags you want to set for the flavor asset</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:choice minOccurs="0" maxOccurs="1">
+				<xs:element ref="serverFileContentResource" minOccurs="1" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Specifies that content ingestion location is on a Kaltura hosted server</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="urlContentResource" minOccurs="1" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Specifies that content file location is a URL (http,ftp)</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="sshUrlContentResource" minOccurs="1" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Specifies that the content file location is a URL (scp/sftp)</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="remoteStorageContentResource" minOccurs="1" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Specifies that content file location is a path within a Kaltura defined remote storage</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="remoteStorageContentResources" minOccurs="1" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Set of content files within several Kaltura defined remote storages</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="entryContentResource" minOccurs="1" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Specifies that content is a Kaltura entry</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="assetContentResource" minOccurs="1" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>Specifies that content is a Kaltura asset</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element ref="contentResource-extension" minOccurs="1" maxOccurs="1" />
+			</xs:choice>
+			<xs:element ref="subtitle-extension" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="label" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>Specify label you want to set for the caption asset</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="captionParamsId" type="xs:int" use="optional">
+			<xs:annotation>
+				<xs:documentation>The asset id to be updated with this resource used only for update</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="captionParams" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>System name of caption params to be associated with the caption asset</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="captionAssetId" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>ID of caption params to be associated with the caption asset</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="isDefault" type="xs:boolean" use="optional">
+			<xs:annotation>
+				<xs:documentation>Specifies if this asset is the default caption asset</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="format" type="KalturaCaptionType" use="optional">
+			<xs:annotation>
+				<xs:documentation>Caption asset file format</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="lang" type="KalturaLanguage" use="optional">
+			<xs:annotation>
+				<xs:documentation>Caption asset file language</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+						
+	</xs:complexType>
+	
+	<xs:element name="subtitle-extension" />
+	<xs:element name="subTitles" type="T_subTitles" substitutionGroup="item-extension">
+		<xs:annotation>
+			<xs:documentation>All subTitles elements</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<subTitles>
+						<action>update</action>
+						<subTitle>...</subTitle>
+						<subTitle>...</subTitle>
+						<subTitle>...</subTitle>
+					</subTitles>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="subTitle" type="T_subTitle">
+		<xs:annotation>
+			<xs:documentation>A single caption asset element</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<subTitle isDefault="true" format="2" lang="Hebrew">
+						<tags>
+							<tag>tag1</tag>
+							<tag>tag2</tag>
+						</tags>
+						<urlContentResource url="http://my.domain/path/caption.srt"/>
+					</subTitle>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+		
+		
+	<!-- codeCuePointBulkUploadXml -->
+	
+	<xs:complexType name="T_scene_codeCuePointBulkUploadXml">
+		<xs:complexContent>
+			<xs:extension base="T_scene">
+				<xs:sequence>
+					<xs:element name="sceneEndTime" minOccurs="0" maxOccurs="1" type="xs:time">
+						<xs:annotation>
+							<xs:documentation>A cue point that marks the end time</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="code" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:documentation>Textual code</xs:documentation>
+						</xs:annotation>
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:maxLength value="250"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="description" minOccurs="0" maxOccurs="1" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>A free text description</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					
+					<xs:element ref="scene-extension" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:element name="scene-code-cue-point" type="T_scene_codeCuePointBulkUploadXml" substitutionGroup="scene">
+		<xs:annotation>
+			<xs:documentation>A single code cue point element</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<scene-code-cue-point entryId="{entry id}">
+						<sceneStartTime>00:00:05.3</sceneStartTime>
+						<tags>
+							<tag>tag1</tag>
+							<tag>tag2</tag>
+						</tags>
+						<code>MY_CODE</code>
+						<description>my code cue point description</description>
+					</scene-code-cue-point>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+		
+		
+	<!-- ThumbCuePointBulkUploadXml -->
+	
+	<xs:complexType name="T_scene_thumbCuePoint">
+		<xs:complexContent>
+			<xs:extension base="T_scene">
+				<xs:sequence>
+					<xs:element name="title" minOccurs="1" maxOccurs="1" type="xs:string"> </xs:element>
+					<xs:element name="description" minOccurs="1" maxOccurs="1" type="xs:string"> </xs:element>
+					<xs:element name="subType" minOccurs="0" maxOccurs="1" type="KalturaThumbCuePointSubType">
+						<xs:annotation>
+							<xs:documentation>Indicates the thumb cue point sub type 1 = Slide 2 = Chapter, defaults to Slide</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element maxOccurs="1" minOccurs="0" ref="slide" />
+					<xs:element ref="scene-extension" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="T_slide">
+		<xs:sequence>
+			<xs:choice maxOccurs="1" minOccurs="0">
+				<xs:element maxOccurs="1" minOccurs="0" ref="urlContentResource"></xs:element>
+				<xs:element maxOccurs="1" minOccurs="0" ref="remoteStorageContentResource"></xs:element>
+				<xs:element maxOccurs="1" minOccurs="0" ref="remoteStorageContentResources"></xs:element>
+				<xs:element maxOccurs="1" minOccurs="0" ref="assetContentResource"></xs:element>
+				<xs:element maxOccurs="1" minOccurs="0" ref="entryContentResource"></xs:element>
+				<xs:element maxOccurs="1" minOccurs="0" ref="contentResource-extension"></xs:element>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="timedThumbAssetId" type="xs:string" use="optional"/>
+	</xs:complexType>
+	
+	<xs:element name="scene-thumb-cue-point" type="T_scene_thumbCuePoint" substitutionGroup="scene">
+		<xs:annotation>
+			<xs:documentation>Single thumb cue point element</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<scene-thumb-cue-point sceneId="{scene id}" entryId="{entry id}">
+						<sceneStartTime>00:00:05.3</sceneStartTime>
+						<tags>
+							<tag>my_tag</tag>
+						</tags>
+						<slide>
+							<urlContentResource url="URL_TO_FILE"/>
+						</slide>
+					</scene-thumb-cue-point>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	
+	<xs:element name="slide" type="T_slide">
+		<xs:annotation>
+			<xs:documentation>
+				The slide image to attahce to tht thumb cue point ellement
+			</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+		
+		
+	<!-- contentDistributionBulkUploadXml -->
+	
+	<xs:complexType name="T_distribution">
+		<xs:sequence>
+			<xs:choice minOccurs="1" maxOccurs="1">
+				<xs:element name="distributionProvider" minOccurs="1" maxOccurs="1" type="KalturaDistributionProviderType">
+					<xs:annotation>
+						<xs:documentation>The provider (Distribution Partner) that the entry is distributed to</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="distributionProfileId" minOccurs="1" maxOccurs="1" type="xs:int">
+					<xs:annotation>
+						<xs:documentation>The identifier of the distribution profile to use for entry distribution</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="distributionProfile" minOccurs="1" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>The system name of the distribution profile to use for entry distribution</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="120"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+			</xs:choice>
+			<xs:element name="sunrise" minOccurs="0" maxOccurs="1" type="xs:dateTime">
+				<xs:annotation>
+					<xs:documentation>
+						The date and time that the entry becomes available on the remote site.<br/>
+						If not specified, the entry scheduling date and time are used.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="sunset" minOccurs="0" maxOccurs="1" type="xs:dateTime">
+				<xs:annotation>
+					<xs:documentation>
+						The date and time that the entry becomes unavailable on the remote site.<br/>
+						If not specified, the entry scheduling date and time are used.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="flavorAssetIds" minOccurs="0" maxOccurs="1" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>
+						Comma-separated list of existing flavor asset IDs for the distribution destination.<br/>
+						Used only for an existing entry.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="thumbAssetIds" minOccurs="0" maxOccurs="1" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>
+						Comma-separated list of existing thumbnail asset IDs for the distribution destination.<br/>
+						Used only for an existing entry.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		
+			<xs:element ref="distribution-extension" minOccurs="0" maxOccurs="unbounded" />
+			
+		</xs:sequence>
+		
+		<xs:attribute name="entryDistributionId" use="optional" type="xs:int">
+			<xs:annotation>
+				<xs:documentation>The identifier of an entry distribution object that an update/delete action applies to</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="submitWhenReady" use="optional" type="xs:boolean" default="false">
+			<xs:annotation>
+				<xs:documentation>Indicates that the entry should be submitted when it is possible</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>		
+	</xs:complexType>
+
+	<xs:complexType name="T_distributions">
+		<xs:sequence>
+			<xs:element ref="distribution" maxOccurs="unbounded" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>All distributions</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:element name="distributions" type="T_distributions" substitutionGroup="item-extension">
+		<xs:annotation>
+			<xs:documentation>All custom metadata elemets</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<distributions>
+						<distribution>
+							<distributionProfile>MY_DISTRIBUTION_PROFILE</distributionProfile>
+							<sunrise>2011-10-26T21:32:52</sunrise>
+							<sunset>2011-12-26T21:32:52</sunset>
+						</distribution>
+					</distributions>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	
+	<xs:element name="distribution" type="T_distribution">
+		<xs:annotation>
+			<xs:documentation>Details related to a content distribution submission</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<distribution>
+						<distributionProfile>MY_DISTRIBUTION_PROFILE</distributionProfile>
+						<sunrise>2011-10-26T21:32:52</sunrise>
+						<sunset>2011-12-26T21:32:52</sunset>
+					</distribution>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	
+	<xs:element name="distribution-extension" />
+		
+		
+	<!-- cuePointBulkUploadXml -->
+	
+	<xs:complexType name="T_scenes">
+		<xs:sequence>
+			<xs:element name="action" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						The action to apply from the item element:<br/>
+						Update - Update an existing entry<br/>
+					</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="update" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="scene" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>A cue point element</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>	
+
+	<xs:complexType name="T_scene" abstract="true">
+		<xs:sequence>
+			<xs:element name="sceneStartTime" minOccurs="1" maxOccurs="1" type="xs:time">
+				<xs:annotation>
+					<xs:documentation>A cue point that marks the start time</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="tags" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>Searchable keywords associated with a cue point</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		
+		<xs:attribute name="sceneId" use="optional">
+			<xs:annotation>
+				<xs:documentation>The identifier of the cue point that an update/delete action applies to</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value="250"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="systemName" use="optional">
+			<xs:annotation>
+				<xs:documentation>The system name of the cue point that an update/delete action applies to</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value="120"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		
+	</xs:complexType>
+	
+	<xs:element name="scenes" type="T_scenes" substitutionGroup="item-extension">
+		<xs:annotation>
+			<xs:documentation>A cue points wrapper element</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<scenes>
+						<action>update</action>
+						<scene-ad-cue-point entryId="{entry id}" systemName="MY_AD_CUE_POINT_SYSTEM_NAME">...</scene-ad-cue-point>
+						<scene-annotation entryId="{entry id}" systemName="MY_ANNOTATION_PARENT_SYSTEM_NAME">...</scene-annotation>
+						<scene-annotation entryId="{entry id}">...</scene-annotation>
+						<scene-code-cue-point entryId="{entry id}">...</scene-code-cue-point>
+					</scenes>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	
+	<xs:element name="scene" type="T_scene">
+		<xs:annotation>
+			<xs:documentation>
+				A base cue point element. This is an abstract element and cannot be used. Use only extended elements.
+			</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	
+	<xs:element name="scene-extension" />
+		
+		
+	<!-- cuePointMetadata -->
+	
+	<xs:element name="scene-customData" type="T_customData" substitutionGroup="scene-extension">
+		<xs:annotation>
+			<xs:documentation>XML for custom metadata</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<scene-ad-cue-point entryId="{entry id}">
+						<sceneStartTime>00:00:05</sceneStartTime>
+						<sceneTitle>my ad title</sceneTitle>
+						<sourceUrl>http://source.to.my/ad.xml</sourceUrl>
+						<adType>1</adType>
+						<protocolType>1</protocolType>
+						<scene-customData metadataProfile="MY_AD_METADATA_PROFILE_SYSTEM_NAME">
+							<metadata>
+								<adData>my ad custom data</adData>
+							</metadata>
+						</scene-customData>
+					</scene-ad-cue-point>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+			
+		
+	<!-- metadataBulkUploadXml -->
+	
+	<xs:complexType name="T_customData">
+		<xs:sequence>
+			<xs:element name="action" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						The action to apply:<br/>
+						transformXslt - transform metadata object using Xslt<br/>
+					</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="transformXslt" />
+						<xs:enumeration value="replace" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="xslt" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						The xslt to transform on the current metadata object
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="xmlData" maxOccurs="1" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>metadata xml Data</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="metadataId" use="optional" type="xs:int">
+			<xs:annotation>
+				<xs:documentation>The identifier of the custom metadata object that an update/delete action applies to</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="metadataProfile" use="optional">
+			<xs:annotation>
+				<xs:documentation>The schema profile system name of the custom metadata</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value="120"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="metadataProfileId" use="optional" type="xs:int">
+			<xs:annotation>
+				<xs:documentation>The schema profile identifier of the custom metadata</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	
+	<xs:complexType name="T_xmlData">
+		<xs:sequence>
+			<xs:any namespace="##local" processContents="skip" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>The XML for custom metadata according to a schema profile</xs:documentation>
+				</xs:annotation>		
+			</xs:any>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="T_customDataItems">
+		<xs:sequence>
+			<xs:element name="action" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						The action to apply:<br/>
+						Update - Update metadata for existing entry<br/>
+					</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="update" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="customData" maxOccurs="unbounded" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>All custom data elemets</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	
+	
+	<xs:element name="customDataItems" type="T_customDataItems" substitutionGroup="item-extension">
+		<xs:annotation>
+			<xs:documentation>All custom metadata elemets</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<customDataItems>
+						<action>update</action>
+						<customData>...</customData>
+						<customData>...</customData>
+						<customData>...</customData>
+					</customDataItems>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	
+	<xs:element name="customData" type="T_customData">
+		<xs:annotation>
+			<xs:documentation>XML for custom metadata</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<customData	metadataId="{metadata id}" 
+								metadataProfile="MY_METADATA_PROFILE_SYSTEM_NAME}"  
+								metadataProfileId="{metadata profile id}"  
+					>
+						<action>transformXslt</action>
+						<xslt></xslt>
+						<xmlData>
+							<metadata>
+								<TextFieldName>entry field value</TextFieldName>
+								<MultipleTextFieldName>entry multiple text field value1</MultipleTextFieldName>
+								<MultipleTextFieldName>entry multiple text field value2</MultipleTextFieldName>
+								<TextSelectionListFieldName>entry selected text value</TextSelectionListFieldName>
+								<DateFieldName>21741540</DateFieldName>
+								<EntryIDFieldName>0_5b3t2c8z</EntryIDFieldName>
+							</metadata>
+						</xmlData>
+					</customData>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	
+	<xs:element name="xmlData" type="T_xmlData">
+		<xs:annotation>
+			<xs:documentation>XML data for custom metadata</xs:documentation>
+			<xs:appinfo>
+				<example>
+						<xmlData>
+							<metadata>
+								<TextFieldName>entry field value</TextFieldName>
+								<MultipleTextFieldName>entry multiple text field value1</MultipleTextFieldName>
+								<MultipleTextFieldName>entry multiple text field value2</MultipleTextFieldName>
+								<TextSelectionListFieldName>entry selected text value</TextSelectionListFieldName>
+								<DateFieldName>21741540</DateFieldName>
+								<EntryIDFieldName>0_5b3t2c8z</EntryIDFieldName>
+							</metadata>
+						</xmlData>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	
+	<xs:complexType name="T_metadataReplacementOptionsItem">
+		<xs:complexContent>
+				<xs:extension base="T_pluginReplacementOptionsItem">
+					<xs:sequence>
+						<xs:element name="shouldCopyMetadata" minOccurs="0" maxOccurs="1">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="true"/>
+									<xs:enumeration value="false"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="T_metadataReplacementOptions">
+		<xs:complexContent>
+			<xs:extension base="T_pluginReplacementOptions">
+				<xs:sequence>
+					<xs:element name="metadataReplacementOptionsItem" type="T_metadataReplacementOptionsItem" minOccurs="0" maxOccurs="1">
+						<xs:annotation>
+							<xs:appinfo>
+								<example>
+								</example>
+							</xs:appinfo>
+						</xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>	
+	
+	<xs:element name="pluginReplacementOptions" type="T_metadataReplacementOptions" substitutionGroup="item-extension">
+		<xs:annotation>
+			<xs:appinfo>
+				<example>
+					<pluginReplacementOptions>
+						<pluginReplacementOptionsItem>
+						...
+						</pluginReplacementOptionsItem>
+						<pluginReplacementOptionsItem>
+						...
+						</pluginReplacementOptionsItem>
+						...
+						...
+					</pluginReplacementOptions>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+		
+		
+	<!-- widevineBulkUploadXml -->
+	
+	<xs:complexType name="T_widevineAssets">
+		<xs:sequence>
+			<xs:element name="action" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						The action to apply:<br/>
+						Update - Update existing asset<br/>
+					</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="update" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element ref="widevineAsset" maxOccurs="unbounded" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>All widevine elements</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="T_widevineAsset">
+		<xs:sequence>
+			<xs:element name="widevineAssetId" minOccurs="1" maxOccurs="1" type="xs:long">
+				<xs:annotation>
+					<xs:documentation>widevine asset id</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="flavorParamsId" minOccurs="1" maxOccurs="1" type="xs:long">
+				<xs:annotation>
+					<xs:documentation>widevine asset flavor params Id</xs:documentation>
+				</xs:annotation>
+			</xs:element>	
+			<xs:element maxOccurs="1" minOccurs="0" name="widevineDistributionStartDate" type="xs:dateTime">
+				<xs:annotation>
+					<xs:documentation>
+						The license distribution window start date.<br/>
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element maxOccurs="1" minOccurs="0" name="widevineDistributionEndDate" type="xs:dateTime">
+				<xs:annotation>
+					<xs:documentation>
+						The license distribution window end date.<br/>
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>	
+		</xs:sequence>		
+		<xs:attribute name="flavorAssetId" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>The asset id to be updated with this resource used only for update</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+						
+	</xs:complexType>
+	
+	<xs:element name="widevineAsset-extension" />
+		<xs:element name="widevineAssets" type="T_widevineAssets" substitutionGroup="item-extension">
+		<xs:annotation>
+			<xs:documentation>All widevine elements</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<widevineAssets>
+						<action>update</action>
+						<widevineAsset>...</widevineAsset>
+						<widevineAsset>...</widevineAsset>
+						<widevineAsset>...</widevineAsset>
+					</widevineAssets>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="widevineAsset" type="T_widevineAsset" substitutionGroup="item-extension">
+		<xs:annotation>
+			<xs:documentation>Widevine asset element</xs:documentation>
+			<xs:appinfo>
+				<example>
+					<widevineAsset flavorAssetId="{asset id}">
+						<widevineAssetId>123456</widevineAssetId>
+						<flavorParamsId>61</flavorParamsId>
+						<widevineDistributionStartDate>2011-05-05T00:00:00</widevineDistributionStartDate>
+						<widevineDistributionEndDate>2014-05-19T00:00:00</widevineDistributionEndDate>
+					</widevineAsset>
+				</example>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:element>
+		
+	<!-- Kaltura enum types -->
+	
+	<xs:simpleType name="KalturaEntryType">
+		<xs:annotation><xs:documentation>http://www.kaltura.com/api_v3/testmeDoc/index.php?object=KalturaEntryType</xs:documentation></xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="-1"><xs:annotation><xs:documentation>AUTOMATIC</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="1"><xs:annotation><xs:documentation>MEDIA_CLIP</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="2"><xs:annotation><xs:documentation>MIX</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="5"><xs:annotation><xs:documentation>PLAYLIST</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="6"><xs:annotation><xs:documentation>DATA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="7"><xs:annotation><xs:documentation>LIVE_STREAM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="8"><xs:annotation><xs:documentation>LIVE_CHANNEL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="10"><xs:annotation><xs:documentation>DOCUMENT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="externalMedia.externalMedia"><xs:annotation><xs:documentation>EXTERNAL_MEDIA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="conference.CONFERENCE_ENTRY_SERVER"><xs:annotation><xs:documentation>CONFERENCE_ENTRY_SERVER</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="sip.SIP_ENTRY_SERVER"><xs:annotation><xs:documentation>SIP_ENTRY_SERVER</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="room.room"><xs:annotation><xs:documentation>ROOM</xs:documentation></xs:annotation></xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+			
+	<xs:simpleType name="KalturaDynamicEnum">
+		<xs:annotation><xs:documentation>http://www.kaltura.com/api_v3/testmeDoc/index.php?object=KalturaDynamicEnum</xs:documentation></xs:annotation>
+		<xs:restriction base="xs:string">
+		</xs:restriction>
+	</xs:simpleType>
+			
+	<xs:simpleType name="KalturaLicenseType">
+		<xs:annotation><xs:documentation>http://www.kaltura.com/api_v3/testmeDoc/index.php?object=KalturaLicenseType</xs:documentation></xs:annotation>
+		<xs:restriction base="xs:int">
+			<xs:enumeration value="-1"><xs:annotation><xs:documentation>UNKNOWN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="0"><xs:annotation><xs:documentation>NONE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="1"><xs:annotation><xs:documentation>COPYRIGHTED</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="2"><xs:annotation><xs:documentation>PUBLIC_DOMAIN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="3"><xs:annotation><xs:documentation>CREATIVECOMMONS_ATTRIBUTION</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="4"><xs:annotation><xs:documentation>CREATIVECOMMONS_ATTRIBUTION_SHARE_ALIKE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="5"><xs:annotation><xs:documentation>CREATIVECOMMONS_ATTRIBUTION_NO_DERIVATIVES</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="6"><xs:annotation><xs:documentation>CREATIVECOMMONS_ATTRIBUTION_NON_COMMERCIAL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="7"><xs:annotation><xs:documentation>CREATIVECOMMONS_ATTRIBUTION_NON_COMMERCIAL_SHARE_ALIKE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="8"><xs:annotation><xs:documentation>CREATIVECOMMONS_ATTRIBUTION_NON_COMMERCIAL_NO_DERIVATIVES</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="9"><xs:annotation><xs:documentation>GFDL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="10"><xs:annotation><xs:documentation>GPL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="11"><xs:annotation><xs:documentation>AFFERO_GPL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="12"><xs:annotation><xs:documentation>LGPL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="13"><xs:annotation><xs:documentation>BSD</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="14"><xs:annotation><xs:documentation>APACHE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="15"><xs:annotation><xs:documentation>MOZILLA</xs:documentation></xs:annotation></xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+			
+	<xs:simpleType name="KalturaMediaType">
+		<xs:annotation><xs:documentation>http://www.kaltura.com/api_v3/testmeDoc/index.php?object=KalturaMediaType</xs:documentation></xs:annotation>
+		<xs:restriction base="xs:int">
+			<xs:enumeration value="1"><xs:annotation><xs:documentation>VIDEO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="2"><xs:annotation><xs:documentation>IMAGE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="5"><xs:annotation><xs:documentation>AUDIO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="201"><xs:annotation><xs:documentation>LIVE_STREAM_FLASH</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="202"><xs:annotation><xs:documentation>LIVE_STREAM_WINDOWS_MEDIA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="203"><xs:annotation><xs:documentation>LIVE_STREAM_REAL_MEDIA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="204"><xs:annotation><xs:documentation>LIVE_STREAM_QUICKTIME</xs:documentation></xs:annotation></xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+			
+	<xs:simpleType name="KalturaAdType">
+		<xs:annotation><xs:documentation>http://www.kaltura.com/api_v3/testmeDoc/index.php?object=KalturaAdType</xs:documentation></xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="1"><xs:annotation><xs:documentation>VIDEO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="2"><xs:annotation><xs:documentation>OVERLAY</xs:documentation></xs:annotation></xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+			
+	<xs:simpleType name="KalturaAdProtocolType">
+		<xs:annotation><xs:documentation>http://www.kaltura.com/api_v3/testmeDoc/index.php?object=KalturaAdProtocolType</xs:documentation></xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="0"><xs:annotation><xs:documentation>CUSTOM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="1"><xs:annotation><xs:documentation>VAST</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="2"><xs:annotation><xs:documentation>VAST_2_0</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="3"><xs:annotation><xs:documentation>VPAID</xs:documentation></xs:annotation></xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+			
+	<xs:simpleType name="KalturaAttachmentType">
+		<xs:annotation><xs:documentation>http://www.kaltura.com/api_v3/testmeDoc/index.php?object=KalturaAttachmentType</xs:documentation></xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="1"><xs:annotation><xs:documentation>TEXT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="2"><xs:annotation><xs:documentation>MEDIA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="3"><xs:annotation><xs:documentation>DOCUMENT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="4"><xs:annotation><xs:documentation>JSON</xs:documentation></xs:annotation></xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+			
+	<xs:simpleType name="KalturaCaptionType">
+		<xs:annotation><xs:documentation>http://www.kaltura.com/api_v3/testmeDoc/index.php?object=KalturaCaptionType</xs:documentation></xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="1"><xs:annotation><xs:documentation>SRT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="2"><xs:annotation><xs:documentation>DFXP</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="3"><xs:annotation><xs:documentation>WEBVTT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="4"><xs:annotation><xs:documentation>CAP</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="5"><xs:annotation><xs:documentation>SCC</xs:documentation></xs:annotation></xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+			
+	<xs:simpleType name="KalturaLanguage">
+		<xs:annotation><xs:documentation>http://www.kaltura.com/api_v3/testmeDoc/index.php?object=KalturaLanguage</xs:documentation></xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Abkhazian"><xs:annotation><xs:documentation>AB</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Afar"><xs:annotation><xs:documentation>AA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Afrikaans"><xs:annotation><xs:documentation>AF</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Albanian"><xs:annotation><xs:documentation>SQ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Amharic"><xs:annotation><xs:documentation>AM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Arabic"><xs:annotation><xs:documentation>AR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Armenian"><xs:annotation><xs:documentation>HY</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Assamese"><xs:annotation><xs:documentation>AS_</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Aymara"><xs:annotation><xs:documentation>AY</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Azerbaijani"><xs:annotation><xs:documentation>AZ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Bashkir"><xs:annotation><xs:documentation>BA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Basque"><xs:annotation><xs:documentation>EU</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Bengali (Bangla)"><xs:annotation><xs:documentation>BN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Bhutani"><xs:annotation><xs:documentation>DZ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Bihari"><xs:annotation><xs:documentation>BH</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Bislama"><xs:annotation><xs:documentation>BI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Breton"><xs:annotation><xs:documentation>BR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Bulgarian"><xs:annotation><xs:documentation>BG</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Burmese"><xs:annotation><xs:documentation>MY</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Byelorussian (Belarusian)"><xs:annotation><xs:documentation>BE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Cambodian"><xs:annotation><xs:documentation>KM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Catalan"><xs:annotation><xs:documentation>CA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Chinese"><xs:annotation><xs:documentation>ZH</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Corsican"><xs:annotation><xs:documentation>CO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Cree"><xs:annotation><xs:documentation>CR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Croatian"><xs:annotation><xs:documentation>HR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Czech"><xs:annotation><xs:documentation>CS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Danish"><xs:annotation><xs:documentation>DA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Dutch"><xs:annotation><xs:documentation>NL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="English"><xs:annotation><xs:documentation>EN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="English (British)"><xs:annotation><xs:documentation>EN_GB</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="English (American)"><xs:annotation><xs:documentation>EN_US</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Esperanto"><xs:annotation><xs:documentation>EO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Estonian"><xs:annotation><xs:documentation>ET</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Faeroese"><xs:annotation><xs:documentation>FO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Farsi"><xs:annotation><xs:documentation>FA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Fiji"><xs:annotation><xs:documentation>FJ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Finnish"><xs:annotation><xs:documentation>FI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="French"><xs:annotation><xs:documentation>FR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="French (Canada)"><xs:annotation><xs:documentation>FR_CA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Frisian"><xs:annotation><xs:documentation>FY</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Galician"><xs:annotation><xs:documentation>GL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Gaelic (Scottish)"><xs:annotation><xs:documentation>GD</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Gaelic (Manx)"><xs:annotation><xs:documentation>GV</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Georgian"><xs:annotation><xs:documentation>KA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="German"><xs:annotation><xs:documentation>DE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Greek"><xs:annotation><xs:documentation>EL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Greenlandic"><xs:annotation><xs:documentation>KL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Guarani"><xs:annotation><xs:documentation>GN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Gujarati"><xs:annotation><xs:documentation>GU</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Hausa"><xs:annotation><xs:documentation>HA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Hebrew"><xs:annotation><xs:documentation>HE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Hebrew"><xs:annotation><xs:documentation>IW</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Hindi"><xs:annotation><xs:documentation>HI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Hungarian"><xs:annotation><xs:documentation>HU</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Icelandic"><xs:annotation><xs:documentation>IS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Indonesian"><xs:annotation><xs:documentation>ID</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Indonesian"><xs:annotation><xs:documentation>IN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Interlingua"><xs:annotation><xs:documentation>IA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Interlingue"><xs:annotation><xs:documentation>IE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Inuinnaqtun"><xs:annotation><xs:documentation>IKT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Inuktitut"><xs:annotation><xs:documentation>IU</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Inupiak"><xs:annotation><xs:documentation>IK</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Irish"><xs:annotation><xs:documentation>GA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Italian"><xs:annotation><xs:documentation>IT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Japanese"><xs:annotation><xs:documentation>JA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Javanese"><xs:annotation><xs:documentation>JV</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kannada"><xs:annotation><xs:documentation>KN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kashmiri"><xs:annotation><xs:documentation>KS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kazakh"><xs:annotation><xs:documentation>KK</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kinyarwanda (Ruanda)"><xs:annotation><xs:documentation>RW</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kirghiz"><xs:annotation><xs:documentation>KY</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kirundi (Rundi)"><xs:annotation><xs:documentation>RN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Korean"><xs:annotation><xs:documentation>KO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kurdish"><xs:annotation><xs:documentation>KU</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Laothian"><xs:annotation><xs:documentation>LO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Latin"><xs:annotation><xs:documentation>LA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Luxembourgish (Letzeburgesch)"><xs:annotation><xs:documentation>LB</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Latvian (Lettish)"><xs:annotation><xs:documentation>LV</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Limburgish ( Limburger)"><xs:annotation><xs:documentation>LI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Lingala"><xs:annotation><xs:documentation>LN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Lithuanian"><xs:annotation><xs:documentation>LT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Macedonian"><xs:annotation><xs:documentation>MK</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Malagasy"><xs:annotation><xs:documentation>MG</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Malay"><xs:annotation><xs:documentation>MS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Malayalam"><xs:annotation><xs:documentation>ML</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Maltese"><xs:annotation><xs:documentation>MT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Maori"><xs:annotation><xs:documentation>MI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Marathi"><xs:annotation><xs:documentation>MR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Moldavian"><xs:annotation><xs:documentation>MO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Mongolian"><xs:annotation><xs:documentation>MN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Nauru"><xs:annotation><xs:documentation>NA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Nepali"><xs:annotation><xs:documentation>NE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Norwegian"><xs:annotation><xs:documentation>NO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Occitan"><xs:annotation><xs:documentation>OC</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Ojibwe, Ojibwa"><xs:annotation><xs:documentation>OJ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Oriya"><xs:annotation><xs:documentation>OR_</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Oromo (Afan, Galla)"><xs:annotation><xs:documentation>OM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Pashto (Pushto)"><xs:annotation><xs:documentation>PS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Polish"><xs:annotation><xs:documentation>PL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Portuguese"><xs:annotation><xs:documentation>PT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Portuguese (Brazil)"><xs:annotation><xs:documentation>PT_BR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Punjabi"><xs:annotation><xs:documentation>PA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Quechua"><xs:annotation><xs:documentation>QU</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Rhaeto-Romance"><xs:annotation><xs:documentation>RM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Romanian"><xs:annotation><xs:documentation>RO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Russian"><xs:annotation><xs:documentation>RU</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Samoan"><xs:annotation><xs:documentation>SM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Sangro"><xs:annotation><xs:documentation>SG</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Sanskrit"><xs:annotation><xs:documentation>SA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Serbian"><xs:annotation><xs:documentation>SR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Serbo-Croatian"><xs:annotation><xs:documentation>SH</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Sesotho"><xs:annotation><xs:documentation>ST</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Setswana"><xs:annotation><xs:documentation>TN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Shona"><xs:annotation><xs:documentation>SN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Sindhi"><xs:annotation><xs:documentation>SD</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Sinhalese"><xs:annotation><xs:documentation>SI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Siswati"><xs:annotation><xs:documentation>SS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Slovak"><xs:annotation><xs:documentation>SK</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Slovenian"><xs:annotation><xs:documentation>SL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Somali"><xs:annotation><xs:documentation>SO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Spanish"><xs:annotation><xs:documentation>ES</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Spanish (Latin America)"><xs:annotation><xs:documentation>ES_XL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Sundanese"><xs:annotation><xs:documentation>SU</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Swahili (Kiswahili)"><xs:annotation><xs:documentation>SW</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Swedish"><xs:annotation><xs:documentation>SV</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tagalog"><xs:annotation><xs:documentation>TL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tajik"><xs:annotation><xs:documentation>TG</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tamil"><xs:annotation><xs:documentation>TA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tatar"><xs:annotation><xs:documentation>TT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Telugu"><xs:annotation><xs:documentation>TE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Thai"><xs:annotation><xs:documentation>TH</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tibetan"><xs:annotation><xs:documentation>BO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tigrinya"><xs:annotation><xs:documentation>TI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tonga"><xs:annotation><xs:documentation>TO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tsonga"><xs:annotation><xs:documentation>TS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Turkish"><xs:annotation><xs:documentation>TR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Turkmen"><xs:annotation><xs:documentation>TK</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Twi"><xs:annotation><xs:documentation>TW</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Uighur"><xs:annotation><xs:documentation>UG</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Ukrainian"><xs:annotation><xs:documentation>UK</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Urdu"><xs:annotation><xs:documentation>UR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Uzbek"><xs:annotation><xs:documentation>UZ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Vietnamese"><xs:annotation><xs:documentation>VI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Volapuk"><xs:annotation><xs:documentation>VO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Welsh"><xs:annotation><xs:documentation>CY</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Wolof"><xs:annotation><xs:documentation>WO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Xhosa"><xs:annotation><xs:documentation>XH</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Yiddish"><xs:annotation><xs:documentation>YI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Yiddish"><xs:annotation><xs:documentation>JI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Yoruba"><xs:annotation><xs:documentation>YO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Zulu"><xs:annotation><xs:documentation>ZU</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Taiwanese Mandarin"><xs:annotation><xs:documentation>ZH_TW</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="No linguistic content"><xs:annotation><xs:documentation>ZXX</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Multilingual"><xs:annotation><xs:documentation>MU</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Afade"><xs:annotation><xs:documentation>AAL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Abnaki Western"><xs:annotation><xs:documentation>ABE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Abaza"><xs:annotation><xs:documentation>ABQ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Abure"><xs:annotation><xs:documentation>ABU</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Achinese"><xs:annotation><xs:documentation>ACE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Saint Lucian Creole French"><xs:annotation><xs:documentation>ACF</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Achang"><xs:annotation><xs:documentation>ACN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Achterhooks"><xs:annotation><xs:documentation>ACT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Achumawi"><xs:annotation><xs:documentation>ACV</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Adioukrou"><xs:annotation><xs:documentation>ADJ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Adynyamathanha"><xs:annotation><xs:documentation>ADT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Adyghe; Adygei"><xs:annotation><xs:documentation>ADY</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Aghem"><xs:annotation><xs:documentation>AGQ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Aguaruna"><xs:annotation><xs:documentation>AGR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Aguacateco"><xs:annotation><xs:documentation>AGU</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Aghul"><xs:annotation><xs:documentation>AGX</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Assyrian Neo-Aramaic"><xs:annotation><xs:documentation>AII</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Ainu (Japan)"><xs:annotation><xs:documentation>AIN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Akkadian"><xs:annotation><xs:documentation>AKK</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Aklanon"><xs:annotation><xs:documentation>AKL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Akum"><xs:annotation><xs:documentation>AKU</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Alabama"><xs:annotation><xs:documentation>AKZ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Qawasqar"><xs:annotation><xs:documentation>ALC</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Aleut"><xs:annotation><xs:documentation>ALE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Algonquian languages"><xs:annotation><xs:documentation>ALG</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Albanian (Gheg)"><xs:annotation><xs:documentation>ALN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Algonquin"><xs:annotation><xs:documentation>ALQ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Albanian (Tosk)"><xs:annotation><xs:documentation>ALS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Altai (Southern)"><xs:annotation><xs:documentation>ALT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Yanesha"><xs:annotation><xs:documentation>AME</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Western Neo-Aramaic"><xs:annotation><xs:documentation>AMW</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Old English"><xs:annotation><xs:documentation>ANG</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Apache (Jicarilla)"><xs:annotation><xs:documentation>APJ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Apache (Western)"><xs:annotation><xs:documentation>APW</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Arabic (standard)"><xs:annotation><xs:documentation>ARB</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Aramaic"><xs:annotation><xs:documentation>ARC</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Arikara"><xs:annotation><xs:documentation>ARI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Araucanian"><xs:annotation><xs:documentation>ARN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Arapaho"><xs:annotation><xs:documentation>ARP</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Assiniboine"><xs:annotation><xs:documentation>ASB</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Asturian"><xs:annotation><xs:documentation>AST</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Athapascan languages"><xs:annotation><xs:documentation>ATH</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Atikamekw"><xs:annotation><xs:documentation>ATJ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Waorani"><xs:annotation><xs:documentation>AUC</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kotava"><xs:annotation><xs:documentation>AVK</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Awadhi"><xs:annotation><xs:documentation>AWA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Arabic Tunisian Spoken"><xs:annotation><xs:documentation>B_T</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Baluchi"><xs:annotation><xs:documentation>BAL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Balinese"><xs:annotation><xs:documentation>BAN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Bavarian"><xs:annotation><xs:documentation>BAR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Basa (Cameroon)"><xs:annotation><xs:documentation>BAS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Balochi Southern"><xs:annotation><xs:documentation>BCC</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Babine"><xs:annotation><xs:documentation>BCR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Bai"><xs:annotation><xs:documentation>BDJ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Beaver"><xs:annotation><xs:documentation>BEA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Beja"><xs:annotation><xs:documentation>BEJ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Bemba (Zambia)"><xs:annotation><xs:documentation>BEM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Betawi"><xs:annotation><xs:documentation>BEW</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Badaga"><xs:annotation><xs:documentation>BFQ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Balti"><xs:annotation><xs:documentation>BFT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Bhili"><xs:annotation><xs:documentation>BHB</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Bhojpuri"><xs:annotation><xs:documentation>BHO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Bikol"><xs:annotation><xs:documentation>BIK</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Bini"><xs:annotation><xs:documentation>BIN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Bishnupriya Manipuri"><xs:annotation><xs:documentation>BPY</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Buriat"><xs:annotation><xs:documentation>BUA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Buginese"><xs:annotation><xs:documentation>BUG</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Chor"><xs:annotation><xs:documentation>CAA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Caddo"><xs:annotation><xs:documentation>CAD</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Carrier Southern"><xs:annotation><xs:documentation>CAF</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Cayuga"><xs:annotation><xs:documentation>CAY</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Min Dong Chinese"><xs:annotation><xs:documentation>CDO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Cebuano"><xs:annotation><xs:documentation>CEB</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Catawba"><xs:annotation><xs:documentation>CHC</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Chagatai"><xs:annotation><xs:documentation>CHG</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Mari (Russia)"><xs:annotation><xs:documentation>CHM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Chinook jargon"><xs:annotation><xs:documentation>CHN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Choctaw"><xs:annotation><xs:documentation>CHO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Chipewyan"><xs:annotation><xs:documentation>CHP</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Cherokee"><xs:annotation><xs:documentation>CHR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Cheyenne"><xs:annotation><xs:documentation>CHY</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Chickasaw"><xs:annotation><xs:documentation>CIC</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Cimbrian"><xs:annotation><xs:documentation>CIM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Chippewa"><xs:annotation><xs:documentation>CIW</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Shor"><xs:annotation><xs:documentation>CJS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Jinyu Chinese"><xs:annotation><xs:documentation>CJY</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Chukot"><xs:annotation><xs:documentation>CKT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Chilcotin"><xs:annotation><xs:documentation>CLC</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Chaldean Neo-Aramaic"><xs:annotation><xs:documentation>CLD</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Clallam Klallam"><xs:annotation><xs:documentation>CLM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Mandarin Chinese"><xs:annotation><xs:documentation>CMN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Cocopa"><xs:annotation><xs:documentation>COC</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Cochimi"><xs:annotation><xs:documentation>COJ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Comanche"><xs:annotation><xs:documentation>COM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Comox"><xs:annotation><xs:documentation>COO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Coptic"><xs:annotation><xs:documentation>COP</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Crimean Tatar"><xs:annotation><xs:documentation>CRH</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Carrier"><xs:annotation><xs:documentation>CRX</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kashubian"><xs:annotation><xs:documentation>CSB</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Cupeo"><xs:annotation><xs:documentation>CUP</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Huizhou Chinese"><xs:annotation><xs:documentation>CZH</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Dakota"><xs:annotation><xs:documentation>DAK</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Dargwa"><xs:annotation><xs:documentation>DAR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tsez"><xs:annotation><xs:documentation>DDO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Delaware"><xs:annotation><xs:documentation>DEL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Dogrib"><xs:annotation><xs:documentation>DGR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Dehu"><xs:annotation><xs:documentation>DHV</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kumiai"><xs:annotation><xs:documentation>DIH</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Dinka"><xs:annotation><xs:documentation>DIN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Zarma"><xs:annotation><xs:documentation>DJE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Dolgan"><xs:annotation><xs:documentation>DLG</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Dungan"><xs:annotation><xs:documentation>DNG</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Dong"><xs:annotation><xs:documentation>DOH</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Dogri (generic)"><xs:annotation><xs:documentation>DOI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Sorbian Lower"><xs:annotation><xs:documentation>DSB</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Duala"><xs:annotation><xs:documentation>DUA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Dyula"><xs:annotation><xs:documentation>DYU</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="E"><xs:annotation><xs:documentation>EEE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Emilian"><xs:annotation><xs:documentation>EGL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="English Middle (1100-1500)"><xs:annotation><xs:documentation>ENM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Even"><xs:annotation><xs:documentation>EVE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Evenki"><xs:annotation><xs:documentation>EVN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Fang (Equatorial Guinea)"><xs:annotation><xs:documentation>FAN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Fala"><xs:annotation><xs:documentation>FAX</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Filipino"><xs:annotation><xs:documentation>FIL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Finnish (Tornedalen)"><xs:annotation><xs:documentation>FIT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Fon"><xs:annotation><xs:documentation>FON</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Frankish"><xs:annotation><xs:documentation>FRK</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Franco-Prove"><xs:annotation><xs:documentation>FRP</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Frisian Northern"><xs:annotation><xs:documentation>FRR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Pulaar"><xs:annotation><xs:documentation>FUC</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Friulian"><xs:annotation><xs:documentation>FUR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Fur"><xs:annotation><xs:documentation>FVR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Ga"><xs:annotation><xs:documentation>GAA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Gagauz"><xs:annotation><xs:documentation>GAG</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Gan"><xs:annotation><xs:documentation>GAN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Dari Zoroastrian"><xs:annotation><xs:documentation>GBZ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Laal"><xs:annotation><xs:documentation>GDM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="German Hutterite"><xs:annotation><xs:documentation>GEH</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Geez"><xs:annotation><xs:documentation>GEZ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Gilbertese"><xs:annotation><xs:documentation>GIL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Gitxsan"><xs:annotation><xs:documentation>GIT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Nanai"><xs:annotation><xs:documentation>GLD</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Konkani Goan"><xs:annotation><xs:documentation>GOM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Greek Ancient (to 1453)"><xs:annotation><xs:documentation>GRC</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Swiss German Alemannic Alsatian"><xs:annotation><xs:documentation>GSW</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Gwichin"><xs:annotation><xs:documentation>GWI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Han"><xs:annotation><xs:documentation>HAA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Haida"><xs:annotation><xs:documentation>HAI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Haisla"><xs:annotation><xs:documentation>HAS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Hawaiian"><xs:annotation><xs:documentation>HAW</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Heiltsuk"><xs:annotation><xs:documentation>HEI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Hidatsa"><xs:annotation><xs:documentation>HID</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Hiligaynon"><xs:annotation><xs:documentation>HIL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Hmong"><xs:annotation><xs:documentation>HMN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Hani"><xs:annotation><xs:documentation>HNI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Hopi"><xs:annotation><xs:documentation>HOP</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Sorbian Upper"><xs:annotation><xs:documentation>HSB</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Halkomelem"><xs:annotation><xs:documentation>HUR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Iloko"><xs:annotation><xs:documentation>ILO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Ingush"><xs:annotation><xs:documentation>INH</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Iroquoian languages"><xs:annotation><xs:documentation>IRO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Itelmen"><xs:annotation><xs:documentation>ITL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Ingrian"><xs:annotation><xs:documentation>IZH</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Lojban"><xs:annotation><xs:documentation>JBO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Judeo-Crimean Tatar"><xs:annotation><xs:documentation>JCT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Judeo-Georgian"><xs:annotation><xs:documentation>JGE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Jutish"><xs:annotation><xs:documentation>JUT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Karakalpak"><xs:annotation><xs:documentation>KAA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kabyle"><xs:annotation><xs:documentation>KAB</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Jju"><xs:annotation><xs:documentation>KAJ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Bezhta"><xs:annotation><xs:documentation>KAP</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kawi"><xs:annotation><xs:documentation>KAW</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kabardian"><xs:annotation><xs:documentation>KBD</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Khanty"><xs:annotation><xs:documentation>KCA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Karaim"><xs:annotation><xs:documentation>KDR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kabuverdianu"><xs:annotation><xs:documentation>KEA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kodava"><xs:annotation><xs:documentation>KFA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kachchi"><xs:annotation><xs:documentation>KFR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Khasi"><xs:annotation><xs:documentation>KHA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kickapoo"><xs:annotation><xs:documentation>KIC</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Karagas"><xs:annotation><xs:documentation>KIM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kiowa"><xs:annotation><xs:documentation>KIO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Khakas"><xs:annotation><xs:documentation>KJH</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kaikavian literary language (Kajkavian)"><xs:annotation><xs:documentation>KJV</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kaska"><xs:annotation><xs:documentation>KKZ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Khalaj Turkic"><xs:annotation><xs:documentation>KLJ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Konkani (specific)"><xs:annotation><xs:documentation>KNN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Komi-Permyak"><xs:annotation><xs:documentation>KOI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Konkani (generic)"><xs:annotation><xs:documentation>KOK</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kosraean"><xs:annotation><xs:documentation>KOS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kpelle"><xs:annotation><xs:documentation>KPE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Ikposo"><xs:annotation><xs:documentation>KPO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Koryak"><xs:annotation><xs:documentation>KPY</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Karachay-Balkar"><xs:annotation><xs:documentation>KRC</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Karelian"><xs:annotation><xs:documentation>KRL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Colognian"><xs:annotation><xs:documentation>KSH</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kansa"><xs:annotation><xs:documentation>KSK</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kumyk"><xs:annotation><xs:documentation>KUM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kutenai"><xs:annotation><xs:documentation>KUT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kwakiutl"><xs:annotation><xs:documentation>KWK</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Khmer Northern"><xs:annotation><xs:documentation>KXM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Ladino"><xs:annotation><xs:documentation>LAD</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Lahnda"><xs:annotation><xs:documentation>LAH</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Lak"><xs:annotation><xs:documentation>LBE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Lezghian"><xs:annotation><xs:documentation>LEZ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Lahu"><xs:annotation><xs:documentation>LHU</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Limbu"><xs:annotation><xs:documentation>LIF</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Ligurian"><xs:annotation><xs:documentation>LIJ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Lillooet"><xs:annotation><xs:documentation>LIL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Laki"><xs:annotation><xs:documentation>LKI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Lakota"><xs:annotation><xs:documentation>LKT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Ladin"><xs:annotation><xs:documentation>LLD</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Lombard"><xs:annotation><xs:documentation>LMO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Loma (Liberia)"><xs:annotation><xs:documentation>LOM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Lozi"><xs:annotation><xs:documentation>LOZ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Luba-Lulua"><xs:annotation><xs:documentation>LUA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Ludian"><xs:annotation><xs:documentation>LUD</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Lunda"><xs:annotation><xs:documentation>LUN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Luo (Kenya and Tanzania)"><xs:annotation><xs:documentation>LUO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Lucumi"><xs:annotation><xs:documentation>LUQ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Lushootseed"><xs:annotation><xs:documentation>LUT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Laz"><xs:annotation><xs:documentation>LZZ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Madurese"><xs:annotation><xs:documentation>MAD</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Magahi"><xs:annotation><xs:documentation>MAG</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Maithili"><xs:annotation><xs:documentation>MAI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Masai"><xs:annotation><xs:documentation>MAS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Moksha"><xs:annotation><xs:documentation>MDF</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Mende (Sierra Leone)"><xs:annotation><xs:documentation>MEN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Menominee"><xs:annotation><xs:documentation>MEZ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Morisyen"><xs:annotation><xs:documentation>MFE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Mayo"><xs:annotation><xs:documentation>MFY</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Mandan"><xs:annotation><xs:documentation>MHQ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Micmac"><xs:annotation><xs:documentation>MIC</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Mandaic"><xs:annotation><xs:documentation>MID</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Minangkabau"><xs:annotation><xs:documentation>MIN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Manchu"><xs:annotation><xs:documentation>MNC</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Meitei"><xs:annotation><xs:documentation>MNI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Min Bei Chinese"><xs:annotation><xs:documentation>MNP</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Mansi"><xs:annotation><xs:documentation>MNS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Mon"><xs:annotation><xs:documentation>MNW</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Montagnais"><xs:annotation><xs:documentation>MOE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Mohawk"><xs:annotation><xs:documentation>MOH</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Mossi"><xs:annotation><xs:documentation>MOS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Maranao"><xs:annotation><xs:documentation>MRW</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Muong"><xs:annotation><xs:documentation>MTQ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Creek"><xs:annotation><xs:documentation>MUS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Mirandese"><xs:annotation><xs:documentation>MWL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Marwari"><xs:annotation><xs:documentation>MWR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Mozarabic"><xs:annotation><xs:documentation>MXI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Pirah"><xs:annotation><xs:documentation>MYP</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Erzya"><xs:annotation><xs:documentation>MYV</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tumzabt"><xs:annotation><xs:documentation>MZB</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Neapolitan"><xs:annotation><xs:documentation>NAP</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Nama (Namibia)"><xs:annotation><xs:documentation>NAQ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Nisgaa"><xs:annotation><xs:documentation>NCG</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Low German Low Saxon"><xs:annotation><xs:documentation>NDS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Newari Nepal Bhasa"><xs:annotation><xs:documentation>NEW_</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Nganasan"><xs:annotation><xs:documentation>NIO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Niuean"><xs:annotation><xs:documentation>NIU</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Gilyak Nivkh"><xs:annotation><xs:documentation>NIV</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Thai (Northern)"><xs:annotation><xs:documentation>NOD</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Nogai"><xs:annotation><xs:documentation>NOG</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Norse Old"><xs:annotation><xs:documentation>NON</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Novial"><xs:annotation><xs:documentation>NOV</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Naskapi"><xs:annotation><xs:documentation>NSK</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Northern Sotho Pedi Sepedi"><xs:annotation><xs:documentation>NSO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Nyamwezi"><xs:annotation><xs:documentation>NYM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Nyoro"><xs:annotation><xs:documentation>NYO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Nyungah"><xs:annotation><xs:documentation>NYS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Ojibwa Northwestern"><xs:annotation><xs:documentation>OJB</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Ojibwa Central"><xs:annotation><xs:documentation>OJC</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Ojibwa Eastern"><xs:annotation><xs:documentation>OJG</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Ojibwa Severn"><xs:annotation><xs:documentation>OJS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Ojibwa Western"><xs:annotation><xs:documentation>OJW</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Oneida"><xs:annotation><xs:documentation>ONE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Onondaga"><xs:annotation><xs:documentation>ONO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tohono Oodham"><xs:annotation><xs:documentation>OOD</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Turkish Ottoman"><xs:annotation><xs:documentation>OTA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Ottawa"><xs:annotation><xs:documentation>OTW</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Pangasinan"><xs:annotation><xs:documentation>PAG</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Pampanga"><xs:annotation><xs:documentation>PAM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Papiamento"><xs:annotation><xs:documentation>PAP</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Palauan"><xs:annotation><xs:documentation>PAU</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Picard"><xs:annotation><xs:documentation>PCD</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="German Pennsylvania"><xs:annotation><xs:documentation>PDC</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Plautdietsch"><xs:annotation><xs:documentation>PDT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Western Farsi"><xs:annotation><xs:documentation>PES</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Pfaelzisch"><xs:annotation><xs:documentation>PFL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Pitcairn-Norfolk"><xs:annotation><xs:documentation>PIH</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Piedmontese"><xs:annotation><xs:documentation>PMS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Pontic"><xs:annotation><xs:documentation>PNT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Potawatomi"><xs:annotation><xs:documentation>POT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Paipai"><xs:annotation><xs:documentation>PPI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Malecite-Passamaquoddy"><xs:annotation><xs:documentation>PQM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Dari (Persian)"><xs:annotation><xs:documentation>PRD</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Prussian"><xs:annotation><xs:documentation>PRG</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Persian"><xs:annotation><xs:documentation>PRP</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Persian (Dari)"><xs:annotation><xs:documentation>PRS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Reserved for local use."><xs:annotation><xs:documentation>QTZ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Quich Central"><xs:annotation><xs:documentation>QUC</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Qashqai"><xs:annotation><xs:documentation>QXQ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Rapanui"><xs:annotation><xs:documentation>RAP</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Rarotongan"><xs:annotation><xs:documentation>RAR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Runion Creole French"><xs:annotation><xs:documentation>RCF</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Romagnol"><xs:annotation><xs:documentation>RGN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Angloromani"><xs:annotation><xs:documentation>RME</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Romani Kalo Finnish"><xs:annotation><xs:documentation>RMF</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Romani Sinte"><xs:annotation><xs:documentation>RMO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Romany"><xs:annotation><xs:documentation>ROM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Rusyn"><xs:annotation><xs:documentation>RUE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Romanian Istro"><xs:annotation><xs:documentation>RUO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Aromanian"><xs:annotation><xs:documentation>RUP</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Romanian Megleno"><xs:annotation><xs:documentation>RUQ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Okinawan Central"><xs:annotation><xs:documentation>RYU</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Sakha"><xs:annotation><xs:documentation>SAH</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Salishan languages"><xs:annotation><xs:documentation>SAL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Aramaic Samaritan"><xs:annotation><xs:documentation>SAM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Santali"><xs:annotation><xs:documentation>SAT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Sicilian"><xs:annotation><xs:documentation>SCN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Scots"><xs:annotation><xs:documentation>SCO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Slavey North"><xs:annotation><xs:documentation>SCS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Sardinian Sassarese"><xs:annotation><xs:documentation>SDC</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Sechelt"><xs:annotation><xs:documentation>SEC</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Seneca"><xs:annotation><xs:documentation>SEE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Seri"><xs:annotation><xs:documentation>SEI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Sekani"><xs:annotation><xs:documentation>SEK</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Selkup"><xs:annotation><xs:documentation>SEL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Shoshoni"><xs:annotation><xs:documentation>SHH</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tachelhit"><xs:annotation><xs:documentation>SHI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Shuswap"><xs:annotation><xs:documentation>SHS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tachawit"><xs:annotation><xs:documentation>SHY</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Sidamo"><xs:annotation><xs:documentation>SID</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Sami Kildin"><xs:annotation><xs:documentation>SJD</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Shawnee"><xs:annotation><xs:documentation>SJW</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Salar"><xs:annotation><xs:documentation>SLR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Southern Sami"><xs:annotation><xs:documentation>SMA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Sami languages"><xs:annotation><xs:documentation>SMI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Lule Sami"><xs:annotation><xs:documentation>SMJ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Inari Sami"><xs:annotation><xs:documentation>SMN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Skolt Sami"><xs:annotation><xs:documentation>SMS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Soninke"><xs:annotation><xs:documentation>SNK</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Saramaccan"><xs:annotation><xs:documentation>SRM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Sranan"><xs:annotation><xs:documentation>SRN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Stoney"><xs:annotation><xs:documentation>STO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Saterland Frisian"><xs:annotation><xs:documentation>STQ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Salish Straits"><xs:annotation><xs:documentation>STR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Sumerian"><xs:annotation><xs:documentation>SUX</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Svan"><xs:annotation><xs:documentation>SVA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Comorian"><xs:annotation><xs:documentation>SWB</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Swabian"><xs:annotation><xs:documentation>SWG</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Swedish Sign Language"><xs:annotation><xs:documentation>SWL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Saxon Upper"><xs:annotation><xs:documentation>SXU</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Syriac"><xs:annotation><xs:documentation>SYR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Silesian"><xs:annotation><xs:documentation>SZL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tabassaran"><xs:annotation><xs:documentation>TAB</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tamasheq"><xs:annotation><xs:documentation>TAQ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tarahumara Central"><xs:annotation><xs:documentation>TAR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tagbanwa"><xs:annotation><xs:documentation>TBW</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Southern Tutchone"><xs:annotation><xs:documentation>TCE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Toda"><xs:annotation><xs:documentation>TCX</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tulu"><xs:annotation><xs:documentation>TCY</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tai Na"><xs:annotation><xs:documentation>TDD</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tetum"><xs:annotation><xs:documentation>TET</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tagish"><xs:annotation><xs:documentation>TGX</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Thompson"><xs:annotation><xs:documentation>THP</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tahltan"><xs:annotation><xs:documentation>THT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tigre"><xs:annotation><xs:documentation>TIG</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Klingon tlhIngan-Hol"><xs:annotation><xs:documentation>TLH</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tlingit"><xs:annotation><xs:documentation>TLI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Talysh"><xs:annotation><xs:documentation>TLY</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tonga (Nyasa)"><xs:annotation><xs:documentation>TOG</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tok Pisin"><xs:annotation><xs:documentation>TPI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tupinamb"><xs:annotation><xs:documentation>TPN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Seediq"><xs:annotation><xs:documentation>TRV</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tsimshian"><xs:annotation><xs:documentation>TSI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tamajaq Tawallammat"><xs:annotation><xs:documentation>TTQ</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Thai Northeastern"><xs:annotation><xs:documentation>TTS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tat Muslim"><xs:annotation><xs:documentation>TTT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tumbuka"><xs:annotation><xs:documentation>TUM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tuscarora"><xs:annotation><xs:documentation>TUS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Turkana"><xs:annotation><xs:documentation>TUV</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tuvalu"><xs:annotation><xs:documentation>TVL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tuvinian"><xs:annotation><xs:documentation>TYV</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Tamazight Central Atlas"><xs:annotation><xs:documentation>TZM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Ubykh"><xs:annotation><xs:documentation>UBY</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Udi"><xs:annotation><xs:documentation>UDI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Udmurt"><xs:annotation><xs:documentation>UDM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Urum"><xs:annotation><xs:documentation>UUM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Venetian"><xs:annotation><xs:documentation>VEC</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Veps"><xs:annotation><xs:documentation>VEP</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Voro"><xs:annotation><xs:documentation>VOR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Votic"><xs:annotation><xs:documentation>VOT</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Vro"><xs:annotation><xs:documentation>VRO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Waray (Philippines)"><xs:annotation><xs:documentation>WAR</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Wiyot"><xs:annotation><xs:documentation>WIY</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Wu Chinese"><xs:annotation><xs:documentation>WUU</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Wymysorys"><xs:annotation><xs:documentation>WYM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Kalmyk Oirat"><xs:annotation><xs:documentation>XAL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Mingrelian"><xs:annotation><xs:documentation>XMF</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Slavey South"><xs:annotation><xs:documentation>XSL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Sudovian"><xs:annotation><xs:documentation>XSV</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Zapotec Isthmus"><xs:annotation><xs:documentation>ZAI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Cantonese"><xs:annotation><xs:documentation>YUE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Hokkien"><xs:annotation><xs:documentation>HKK</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Teo Chew"><xs:annotation><xs:documentation>TEO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Hainanese"><xs:annotation><xs:documentation>HNN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Hakka"><xs:annotation><xs:documentation>HAK</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Michif"><xs:annotation><xs:documentation>CRG</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Undefined"><xs:annotation><xs:documentation>UN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Siksika"><xs:annotation><xs:documentation>BLA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="Okanagan"><xs:annotation><xs:documentation>OKA</xs:documentation></xs:annotation></xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+			
+	<xs:simpleType name="KalturaThumbCuePointSubType">
+		<xs:annotation><xs:documentation>http://www.kaltura.com/api_v3/testmeDoc/index.php?object=KalturaThumbCuePointSubType</xs:documentation></xs:annotation>
+		<xs:restriction base="xs:int">
+			<xs:enumeration value="1"><xs:annotation><xs:documentation>SLIDE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="2"><xs:annotation><xs:documentation>CHAPTER</xs:documentation></xs:annotation></xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+			
+	<xs:simpleType name="KalturaDistributionProviderType">
+		<xs:annotation><xs:documentation>http://www.kaltura.com/api_v3/testmeDoc/index.php?object=KalturaDistributionProviderType</xs:documentation></xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="1"><xs:annotation><xs:documentation>GENERIC</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="2"><xs:annotation><xs:documentation>SYNDICATION</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="attUverseDistribution.ATT_UVERSE"><xs:annotation><xs:documentation>ATT_UVERSE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="avnDistribution.AVN"><xs:annotation><xs:documentation>AVN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="comcastMrssDistribution.COMCAST_MRSS"><xs:annotation><xs:documentation>COMCAST_MRSS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="crossKalturaDistribution.CROSS_KALTURA"><xs:annotation><xs:documentation>CROSS_KALTURA</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="dailymotionDistribution.DAILYMOTION"><xs:annotation><xs:documentation>DAILYMOTION</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="doubleClickDistribution.DOUBLECLICK"><xs:annotation><xs:documentation>DOUBLECLICK</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="freewheelDistribution.FREEWHEEL"><xs:annotation><xs:documentation>FREEWHEEL</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="freewheelGenericDistribution.FREEWHEEL_GENERIC"><xs:annotation><xs:documentation>FREEWHEEL_GENERIC</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="ftpDistribution.FTP"><xs:annotation><xs:documentation>FTP</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="ftpDistribution.FTP_SCHEDULED"><xs:annotation><xs:documentation>FTP_SCHEDULED</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="huluDistribution.HULU"><xs:annotation><xs:documentation>HULU</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="ideticDistribution.IDETIC"><xs:annotation><xs:documentation>IDETIC</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="metroPcsDistribution.METRO_PCS"><xs:annotation><xs:documentation>METRO_PCS</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="msnDistribution.MSN"><xs:annotation><xs:documentation>MSN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="ndnDistribution.NDN"><xs:annotation><xs:documentation>NDN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="podcastDistribution.PODCAST"><xs:annotation><xs:documentation>PODCAST</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="quickPlayDistribution.QUICKPLAY"><xs:annotation><xs:documentation>QUICKPLAY</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="synacorHboDistribution.SYNACOR_HBO"><xs:annotation><xs:documentation>SYNACOR_HBO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="tvComDistribution.TVCOM"><xs:annotation><xs:documentation>TVCOM</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="timeWarnerDistribution.TIME_WARNER"><xs:annotation><xs:documentation>TIME_WARNER</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="uverseClickToOrderDistribution.UVERSE_CLICK_TO_ORDER"><xs:annotation><xs:documentation>UVERSE_CLICK_TO_ORDER</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="uverseDistribution.UVERSE"><xs:annotation><xs:documentation>UVERSE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="verizonVcastDistribution.VERIZON_VCAST"><xs:annotation><xs:documentation>VERIZON_VCAST</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="yahooDistribution.YAHOO"><xs:annotation><xs:documentation>YAHOO</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="youTubeDistribution.YOUTUBE"><xs:annotation><xs:documentation>YOUTUBE</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="youtubeApiDistribution.YOUTUBE_API"><xs:annotation><xs:documentation>YOUTUBE_API</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="cortexApiDistribution.CORTEX_API"><xs:annotation><xs:documentation>CORTEX_API</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="tvinciDistribution.TVINCI"><xs:annotation><xs:documentation>TVINCI</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="unicornDistribution.UNICORN"><xs:annotation><xs:documentation>UNICORN</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="facebookDistribution.FACEBOOK"><xs:annotation><xs:documentation>FACEBOOK</xs:documentation></xs:annotation></xs:enumeration>
+			<xs:enumeration value="pushToNewsDistribution.PUSH_TO_NEWS"><xs:annotation><xs:documentation>PUSH_TO_NEWS</xs:documentation></xs:annotation></xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+			
+</xs:schema>

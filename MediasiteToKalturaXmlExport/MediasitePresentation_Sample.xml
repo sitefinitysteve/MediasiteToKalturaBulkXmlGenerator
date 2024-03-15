@@ -1,0 +1,537 @@
+<LocalPresentationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Version>7.0</Version>
+  <Properties>
+    <Presentation>
+      <Id>
+        <Value>cb53348f-f635-479b-8510-ff32b325418f</Value>
+        <EntityType>Presentation</EntityType>
+      </Id>
+      <ParentFolderId>
+        <Value>e275572f-acbd-42e5-9460-7bb56aba137c</Value>
+        <EntityType>Folder</EntityType>
+      </ParentFolderId>
+      <Owner>rdurand</Owner>
+      <Creator>rdurand</Creator>
+      <Recycled>false</Recycled>
+      <ObjectFlags>None</ObjectFlags>
+      <CreationDate>2023-09-18T18:00:48.337Z</CreationDate>
+      <LastModified>2023-09-19T04:02:53.847Z</LastModified>
+      <RootId>
+        <Value>cb53348f-f635-479b-8510-ff32b325418f</Value>
+        <EntityType>Presentation</EntityType>
+      </RootId>
+      <Title>Selectives - Medical Subspecialty Selectives Orientation NRC 2023/2024 - Dr. Mohammad Refaei - Sept 18, 2023</Title>
+      <Description />
+      <FolderId>
+        <Value>e275572f-acbd-42e5-9460-7bb56aba137c</Value>
+        <EntityType>Folder</EntityType>
+      </FolderId>
+      <PlayerId>
+        <Value>d3641b73-caca-4d37-b5d8-68b9ada57aba</Value>
+        <EntityType>Player</EntityType>
+      </PlayerId>
+      <RecordDateTimeUtc>2023-09-18T13:00:00Z</RecordDateTimeUtc>
+      <Duration>1202000</Duration>
+      <IsUploadAutomatic>true</IsUploadAutomatic>
+      <TimeZoneRegistryKey>Eastern Standard Time</TimeZoneRegistryKey>
+      <Status>
+        <DataStatus>Uploaded</DataStatus>
+        <IsLive>false</IsLive>
+        <IsLivePaused>false</IsLivePaused>
+        <LiveStatus>0</LiveStatus>
+        <IsOnDemand>true</IsOnDemand>
+        <SimpleStatus>Viewable</SimpleStatus>
+      </Status>
+      <Options>
+        <OptionValue>32</OptionValue>
+        <IsPollsEnabled>false</IsPollsEnabled>
+        <IsLiveCountdownEnabled>false</IsLiveCountdownEnabled>
+        <IsLiveIndicationDelayed>false</IsLiveIndicationDelayed>
+        <IsPollsInternal>true</IsPollsInternal>
+        <IsForumsEnabled>false</IsForumsEnabled>
+        <IsSharingEnabled>false</IsSharingEnabled>
+        <IsPlayerLocked>false</IsPlayerLocked>
+        <NotifyOnMetadataChanged>false</NotifyOnMetadataChanged>
+        <PreferSmoothStreaming>false</PreferSmoothStreaming>
+        <IsPrivate>false</IsPrivate>
+        <UseAdaptiveCapture>false</UseAdaptiveCapture>
+        <IsPlayerCopyrightDisabled>false</IsPlayerCopyrightDisabled>
+        <IsExternalVideo>false</IsExternalVideo>
+      </Options>
+      <MaxConnections>-1</MaxConnections>
+      <Source>2</Source>
+      <ThumbnailGenerateOption>0</ThumbnailGenerateOption>
+      <IsDvrPlaybackEnabled>false</IsDvrPlaybackEnabled>
+      <DvrBufferDurationMaximum>120</DvrBufferDurationMaximum>
+      <ApprovalState>3</ApprovalState>
+      <ChangeTypes>33</ChangeTypes>
+      <EnableReviewEditApprove>false</EnableReviewEditApprove>
+      <HeadContentRevision>1</HeadContentRevision>
+      <NextRevisionNumber>2</NextRevisionNumber>
+      <PlayerOverrides>
+        <LayoutElements />
+        <LayoutElementGroups />
+        <LayoutElementDependencies />
+        <LayoutDimensions />
+        <LayoutImages />
+        <Version>
+          <MajorVersion>6</MajorVersion>
+          <MinorVersion>1.5</MinorVersion>
+        </Version>
+      </PlayerOverrides>
+      <Presenters>
+        <PresentationPresenter>
+          <Id>dd16bfcc-4e3a-4c40-816a-fd5163e7e1d4</Id>
+          <Prefix>Dr.</Prefix>
+          <FirstName>Mohammed</FirstName>
+          <LastName>Refaei</LastName>
+          <Order>0</Order>
+        </PresentationPresenter>
+      </Presenters>
+      <ExternalLinks />
+    </Presentation>
+    <Polls />
+    <Folders>
+      <Folder>
+        <Id>
+          <Value>14601fed-cbf5-4a80-a107-4d3163a26f8f</Value>
+          <EntityType>Folder</EntityType>
+        </Id>
+        <Owner>MediasiteAdmin</Owner>
+        <Creator>MediasiteAdmin</Creator>
+        <Recycled>false</Recycled>
+        <ObjectFlags>None</ObjectFlags>
+        <CreationDate>2015-05-26T16:12:19.39Z</CreationDate>
+        <LastModified>2015-05-26T16:12:19.407Z</LastModified>
+        <Name>Mediasite</Name>
+        <Type>Root</Type>
+      </Folder>
+      <Folder>
+        <Id>
+          <Value>28cc314b-0b72-47b5-ae1a-a73d0ac60f91</Value>
+          <EntityType>Folder</EntityType>
+        </Id>
+        <ParentFolderId>
+          <Value>14601fed-cbf5-4a80-a107-4d3163a26f8f</Value>
+          <EntityType>Folder</EntityType>
+        </ParentFolderId>
+        <Owner>MediasiteAdmin</Owner>
+        <Creator>MediasiteAdmin</Creator>
+        <Recycled>false</Recycled>
+        <ObjectFlags>None</ObjectFlags>
+        <CreationDate>2015-08-18T14:09:55.867Z</CreationDate>
+        <LastModified>2015-08-18T14:09:55.867Z</LastModified>
+        <Name>medportal</Name>
+        <Type>Folder</Type>
+      </Folder>
+      <Folder>
+        <Id>
+          <Value>fdaafc3e-2e5e-4890-989b-ebacdafc002d</Value>
+          <EntityType>Folder</EntityType>
+        </Id>
+        <ParentFolderId>
+          <Value>28cc314b-0b72-47b5-ae1a-a73d0ac60f91</Value>
+          <EntityType>Folder</EntityType>
+        </ParentFolderId>
+        <Owner>MediasiteAdmin</Owner>
+        <Creator>MediasiteAdmin</Creator>
+        <Recycled>false</Recycled>
+        <ObjectFlags>None</ObjectFlags>
+        <CreationDate>2015-08-18T14:10:11.943Z</CreationDate>
+        <LastModified>2015-08-18T14:10:11.943Z</LastModified>
+        <Name>Undergraduate MD</Name>
+        <Type>Folder</Type>
+      </Folder>
+      <Folder>
+        <Id>
+          <Value>67dacdb2-ba82-47d6-a05a-10df1f0bc669</Value>
+          <EntityType>Folder</EntityType>
+        </Id>
+        <ParentFolderId>
+          <Value>fdaafc3e-2e5e-4890-989b-ebacdafc002d</Value>
+          <EntityType>Folder</EntityType>
+        </ParentFolderId>
+        <Owner>MediasiteAdmin</Owner>
+        <Creator>MediasiteAdmin</Creator>
+        <Recycled>false</Recycled>
+        <ObjectFlags>None</ObjectFlags>
+        <CreationDate>2015-08-18T14:24:11.83Z</CreationDate>
+        <LastModified>2015-08-18T14:24:11.83Z</LastModified>
+        <Name>Clerkship</Name>
+        <Type>Folder</Type>
+      </Folder>
+      <Folder>
+        <Id>
+          <Value>e275572f-acbd-42e5-9460-7bb56aba137c</Value>
+          <EntityType>Folder</EntityType>
+        </Id>
+        <ParentFolderId>
+          <Value>67dacdb2-ba82-47d6-a05a-10df1f0bc669</Value>
+          <EntityType>Folder</EntityType>
+        </ParentFolderId>
+        <Owner>MediasiteAdmin</Owner>
+        <Creator>MediasiteAdmin</Creator>
+        <Recycled>false</Recycled>
+        <ObjectFlags>None</ObjectFlags>
+        <CreationDate>2023-09-06T15:12:30.673Z</CreationDate>
+        <LastModified>2023-09-06T15:12:30.673Z</LastModified>
+        <Name>Selectives</Name>
+        <Type>Folder</Type>
+      </Folder>
+    </Folders>
+    <Player>
+      <Id>
+        <Value>d3641b73-caca-4d37-b5d8-68b9ada57aba</Value>
+        <EntityType>Player</EntityType>
+      </Id>
+      <ParentFolderId>
+        <Value>7bc2794c-79a8-449b-bfc0-a68f311f321a</Value>
+        <EntityType>Folder</EntityType>
+      </ParentFolderId>
+      <Owner>MediasiteAdmin</Owner>
+      <Creator>MediasiteAdmin</Creator>
+      <Recycled>false</Recycled>
+      <ObjectFlags>SystemEntity</ObjectFlags>
+      <CreationDate>2015-05-26T16:12:20.547Z</CreationDate>
+      <LastModified>2015-05-26T16:12:20.547Z</LastModified>
+      <Name>Desktop Recorder MultiView Player</Name>
+      <Description>MultiView Player used for Desktop Recorder presentations</Description>
+      <LayoutId>acc946dc-ba3a-45fd-8cee-dee458567919</LayoutId>
+      <LayoutOptions>
+        <LayoutElements>
+          <PlayerLayoutElement>
+            <Key>ShowHeaderArea</Key>
+            <Name>Show header banner</Name>
+            <GroupKey>General</GroupKey>
+            <Category>Boolean</Category>
+            <Usage>Mandatory</Usage>
+            <AllowOverride>false</AllowOverride>
+            <Value>False</Value>
+            <AllowedValues />
+            <DependsOn />
+          </PlayerLayoutElement>
+          <PlayerLayoutElement>
+            <Key>AllowClosedCaptions</Key>
+            <Name>Closed captions</Name>
+            <GroupKey>InfoAndInteractivity</GroupKey>
+            <Category>Boolean</Category>
+            <Usage>Mandatory</Usage>
+            <AllowOverride>false</AllowOverride>
+            <Value>True</Value>
+            <AllowedValues />
+            <DependsOn />
+          </PlayerLayoutElement>
+        </LayoutElements>
+        <LayoutElementGroups />
+        <LayoutElementDependencies />
+        <LayoutDimensions />
+        <LayoutImages>
+          <PlayerLayoutImage>
+            <Key>FullScreenBanner</Key>
+            <Name>Banner Image</Name>
+            <Usage>Mandatory</Usage>
+            <AllowOverride>true</AllowOverride>
+            <ImageFilename>default_banner.jpg</ImageFilename>
+            <SupportsUrl>true</SupportsUrl>
+            <ImageUrl>http://www.sonicfoundry.com</ImageUrl>
+            <ImageWidth>468</ImageWidth>
+            <ImageHeight>60</ImageHeight>
+          </PlayerLayoutImage>
+          <PlayerLayoutImage>
+            <Key>PresentationEndedBanner</Key>
+            <Name>Presentation Ended Banner Image</Name>
+            <Usage>Mandatory</Usage>
+            <AllowOverride>true</AllowOverride>
+            <ImageFilename>presentation_ended.png</ImageFilename>
+            <SupportsUrl>true</SupportsUrl>
+            <ImageUrl />
+            <ImageWidth>520</ImageWidth>
+            <ImageHeight>70</ImageHeight>
+          </PlayerLayoutImage>
+          <PlayerLayoutImage>
+            <Key>WaitingForLiveBanner</Key>
+            <Name>Waiting for Live Presentation Banner Image</Name>
+            <Usage>Mandatory</Usage>
+            <AllowOverride>true</AllowOverride>
+            <ImageFilename>presentation_waiting_for_live.png</ImageFilename>
+            <SupportsUrl>false</SupportsUrl>
+            <ImageUrl />
+            <ImageWidth>520</ImageWidth>
+            <ImageHeight>70</ImageHeight>
+          </PlayerLayoutImage>
+          <PlayerLayoutImage>
+            <Key>DefaultPresenterImage</Key>
+            <Name>Default Presenter Image</Name>
+            <Usage>Mandatory</Usage>
+            <AllowOverride>false</AllowOverride>
+            <ImageFilename>presenter_image_not_available.png</ImageFilename>
+            <SupportsUrl>false</SupportsUrl>
+            <ImageWidth>60</ImageWidth>
+            <ImageHeight>80</ImageHeight>
+          </PlayerLayoutImage>
+          <PlayerLayoutImage>
+            <Key>DefaultStreamImage</Key>
+            <Name>Default Stream Image</Name>
+            <Usage>Mandatory</Usage>
+            <AllowOverride>false</AllowOverride>
+            <ImageFilename>default_stream_image.png</ImageFilename>
+            <SupportsUrl>false</SupportsUrl>
+            <ImageWidth>1280</ImageWidth>
+            <ImageHeight>720</ImageHeight>
+          </PlayerLayoutImage>
+        </LayoutImages>
+        <Version>
+          <MajorVersion>6</MajorVersion>
+          <MinorVersion>1.5</MinorVersion>
+        </Version>
+      </LayoutOptions>
+    </Player>
+    <ContentRevisions>
+      <ContentRevision>
+        <RevisionNumber>1</RevisionNumber>
+        <DataStatus>5</DataStatus>
+        <LiveStatus>5</LiveStatus>
+        <IsOnDemand>true</IsOnDemand>
+        <AudioStreamType>0</AudioStreamType>
+        <CaptionContent>
+          <Id>
+            <Value>dd768f33-8b0c-405a-aa4e-4cef564a9b08</Value>
+            <EntityType>PresentationContent</EntityType>
+          </Id>
+          <ContentServerId>
+            <Value>2fa71667-5d89-4131-b70d-d2cac9fa99c1</Value>
+            <EntityType>ContentServer</EntityType>
+          </ContentServerId>
+          <ContentType>CaptionFile</ContentType>
+          <EncodingOrder>1</EncodingOrder>
+          <PlaybackOrder>1</PlaybackOrder>
+          <Status>Completed</Status>
+          <FileName>captions.dfxp</FileName>
+          <FileLength>25960</FileLength>
+          <Length>0</Length>
+          <MimeType>text/caption</MimeType>
+          <ArchiveType>0</ArchiveType>
+          <IsTranscodeSource>false</IsTranscodeSource>
+          <DisableCaptionDisplay>false</DisableCaptionDisplay>
+          <ConfidenceScore xsi:nil="true" />
+          <OverrideConfidenceThreshold>false</OverrideConfidenceThreshold>
+          <ConfidenceDate xsi:nil="true" />
+        </CaptionContent>
+        <ThumbnailContent>
+          <Id>
+            <Value>fa811d0a-504c-4044-a006-89a378bd1119</Value>
+            <EntityType>PresentationContent</EntityType>
+          </Id>
+          <ContentServerId>
+            <Value>2fa71667-5d89-4131-b70d-d2cac9fa99c1</Value>
+            <EntityType>ContentServer</EntityType>
+          </ContentServerId>
+          <ContentType>PresentationThumbnail</ContentType>
+          <EncodingOrder>1</EncodingOrder>
+          <PlaybackOrder>1</PlaybackOrder>
+          <Status>Completed</Status>
+          <FileName>9e8f96ec-07ca-41b8-825b-4244b40b94cd.jpg</FileName>
+          <FileLength>92560</FileLength>
+          <Length>0</Length>
+          <MimeType>image/jpeg</MimeType>
+          <ArchiveType>0</ArchiveType>
+          <IsTranscodeSource>false</IsTranscodeSource>
+          <DisableCaptionDisplay>false</DisableCaptionDisplay>
+          <ConfidenceScore xsi:nil="true" />
+          <OverrideConfidenceThreshold>false</OverrideConfidenceThreshold>
+          <ConfidenceDate xsi:nil="true" />
+        </ThumbnailContent>
+        <AudioPeaksContent>
+          <Id>
+            <Value>b8fe4843-0fa4-4896-8263-657e13e98c8a</Value>
+            <EntityType>PresentationContent</EntityType>
+          </Id>
+          <ContentServerId>
+            <Value>2fa71667-5d89-4131-b70d-d2cac9fa99c1</Value>
+            <EntityType>ContentServer</EntityType>
+          </ContentServerId>
+          <ContentType>AudioPeaks</ContentType>
+          <EncodingOrder>1</EncodingOrder>
+          <PlaybackOrder>1</PlaybackOrder>
+          <Status>Completed</Status>
+          <FileName>7fbb7d61-dc0e-4926-99a1-72a141529d87.Audio.png</FileName>
+          <FileLength>222686</FileLength>
+          <Length>0</Length>
+          <MimeType>image/png</MimeType>
+          <ArchiveType>0</ArchiveType>
+          <IsTranscodeSource>false</IsTranscodeSource>
+          <DisableCaptionDisplay>false</DisableCaptionDisplay>
+          <ConfidenceScore xsi:nil="true" />
+          <OverrideConfidenceThreshold>false</OverrideConfidenceThreshold>
+          <ConfidenceDate xsi:nil="true" />
+          <BytesPerSample>2</BytesPerSample>
+          <Channels>2</Channels>
+          <PeakCount>530217</PeakCount>
+          <PeaksPerPixel>4</PeaksPerPixel>
+          <PixelsPerRow>1024</PixelsPerRow>
+          <Rows>130</Rows>
+          <SampleRate>44100</SampleRate>
+          <SamplesPerBlock>100</SamplesPerBlock>
+        </AudioPeaksContent>
+        <Streams>
+          <ContentStream>
+            <Id>
+              <Value>a65e09d4-44f5-4c6e-a99c-36d6151d9f6a</Value>
+              <EntityType>Stream</EntityType>
+            </Id>
+            <StreamType>0</StreamType>
+            <Priority>1</Priority>
+            <AudioEncodingSettingId>
+              <Value>332ba782-dc4c-4939-9554-973886556806</Value>
+              <EntityType>ContentEncodingSettings</EntityType>
+            </AudioEncodingSettingId>
+            <PreferFullMotion>false</PreferFullMotion>
+            <AspectRatio>Unknown</AspectRatio>
+            <PlaybackAudioSource>true</PlaybackAudioSource>
+            <ThumbnailContent>
+              <Id>
+                <Value>91b11dfe-fe3d-4f15-87b4-19f6b9a5b3a8</Value>
+                <EntityType>PresentationContent</EntityType>
+              </Id>
+              <ContentServerId>
+                <Value>2fa71667-5d89-4131-b70d-d2cac9fa99c1</Value>
+                <EntityType>ContentServer</EntityType>
+              </ContentServerId>
+              <ContentType>PresentationThumbnail</ContentType>
+              <EncodingOrder>1</EncodingOrder>
+              <PlaybackOrder>1</PlaybackOrder>
+              <Status>Completed</Status>
+              <FileName>59eac0c6-5ccd-4a7d-a1a1-e6f933de79c6.jpg</FileName>
+              <FileLength>92560</FileLength>
+              <Length>0</Length>
+              <MimeType>image/jpeg</MimeType>
+              <ArchiveType>0</ArchiveType>
+              <IsTranscodeSource>false</IsTranscodeSource>
+              <DisableCaptionDisplay>false</DisableCaptionDisplay>
+              <ConfidenceScore xsi:nil="true" />
+              <OverrideConfidenceThreshold>false</OverrideConfidenceThreshold>
+              <ConfidenceDate xsi:nil="true" />
+            </ThumbnailContent>
+            <SlideContent>
+              <Id>
+                <Value>01e06953-39fa-4162-aee1-b934df5593ac</Value>
+                <EntityType>PresentationContent</EntityType>
+              </Id>
+              <ContentServerId>
+                <Value>d092b2d7-195c-459d-b3c9-6ac390d83eaf</Value>
+                <EntityType>ContentServer</EntityType>
+              </ContentServerId>
+              <ContentEncodeSettingsId>
+                <Value>07b772d1-f0af-4bb9-986f-64d26ee1b0e2</Value>
+                <EntityType>ContentEncodingSettings</EntityType>
+              </ContentEncodeSettingsId>
+              <ContentType>Slides</ContentType>
+              <EncodingOrder>1</EncodingOrder>
+              <PlaybackOrder>1</PlaybackOrder>
+              <Status>Completed</Status>
+              <FileName>slide_video1_{0:D4}_full.jpg</FileName>
+              <FileLength>0</FileLength>
+              <Length>0</Length>
+              <MimeType>image/jpeg</MimeType>
+              <ArchiveType>0</ArchiveType>
+              <IsTranscodeSource>false</IsTranscodeSource>
+              <EncodingName>[Default] Use Recorder's Settings</EncodingName>
+              <DisableCaptionDisplay>false</DisableCaptionDisplay>
+              <ConfidenceScore xsi:nil="true" />
+              <OverrideConfidenceThreshold>false</OverrideConfidenceThreshold>
+              <ConfidenceDate xsi:nil="true" />
+              <ServerFileName>slide_{0:D4}_966c363ef06e43338c5640606f623006.jpg</ServerFileName>
+              <Slides />
+              <IsGeneratedFromVideoStream>true</IsGeneratedFromVideoStream>
+            </SlideContent>
+            <OnDemandContentList>
+              <PresentationContent>
+                <Id>
+                  <Value>267e5bd1-59bc-4216-88e5-59ba90b3e175</Value>
+                  <EntityType>PresentationContent</EntityType>
+                </Id>
+                <ContentServerId>
+                  <Value>2e5820e8-978c-4aa1-bd7c-31e833176302</Value>
+                  <EntityType>ContentServer</EntityType>
+                </ContentServerId>
+                <ContentType>OnDemandFile</ContentType>
+                <EncodingOrder>2</EncodingOrder>
+                <PlaybackOrder>2</PlaybackOrder>
+                <Status>Completed</Status>
+                <FileName>3a6a3e9b-a1d7-4078-9589-e73aa71153fd.mp4</FileName>
+                <FileLength>175778520</FileLength>
+                <Length>1202306</Length>
+                <MimeType>video/mp4</MimeType>
+                <ArchiveType>0</ArchiveType>
+                <IsTranscodeSource>true</IsTranscodeSource>
+                <EncodingName>System match to 1280x800 MP4 (h.264) at 25 fps, 1041000 bps</EncodingName>
+                <DisableCaptionDisplay>false</DisableCaptionDisplay>
+                <ConfidenceScore xsi:nil="true" />
+                <OverrideConfidenceThreshold>false</OverrideConfidenceThreshold>
+                <ConfidenceDate xsi:nil="true" />
+              </PresentationContent>
+            </OnDemandContentList>
+          </ContentStream>
+        </Streams>
+      </ContentRevision>
+    </ContentRevisions>
+    <EncodingSettings>
+      <ContentEncodingSettings>
+        <Id>
+          <Value>07b772d1-f0af-4bb9-986f-64d26ee1b0e2</Value>
+          <EntityType>ContentEncodingSettings</EntityType>
+        </Id>
+        <ParentFolderId>
+          <Value>b51edf12-47e0-455f-82da-88f862895a0b</Value>
+          <EntityType>Folder</EntityType>
+        </ParentFolderId>
+        <Owner>MediasiteAdmin</Owner>
+        <Creator>MediasiteAdmin</Creator>
+        <Recycled>false</Recycled>
+        <ObjectFlags>SystemEntity</ObjectFlags>
+        <CreationDate>2015-05-26T16:12:22.327Z</CreationDate>
+        <LastModified>2015-05-26T16:12:22.327Z</LastModified>
+        <Name>[Default] Use Recorder's Settings</Name>
+        <Description>Use the slide capture settings configured on the Mediasite Recorder.</Description>
+        <MimeType>image/jpeg</MimeType>
+        <SerializedSettings>&lt;SlideEncodingSettings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;&lt;SlideCaptureSettings&gt;&lt;ChangeSensitivity&gt;0&lt;/ChangeSensitivity&gt;&lt;MaxScanRate&gt;0&lt;/MaxScanRate&gt;&lt;Quality&gt;0&lt;/Quality&gt;&lt;Options&gt;None&lt;/Options&gt;&lt;Interval&gt;0&lt;/Interval&gt;&lt;BypassInterval&gt;0&lt;/BypassInterval&gt;&lt;UseStabilization&gt;false&lt;/UseStabilization&gt;&lt;UseAdaptiveSceneDetection&gt;false&lt;/UseAdaptiveSceneDetection&gt;&lt;/SlideCaptureSettings&gt;&lt;/SlideEncodingSettings&gt;</SerializedSettings>
+      </ContentEncodingSettings>
+    </EncodingSettings>
+    <PresentationComments>
+      <PresentationComment>
+        <PresentationId>
+          <Value>cb53348f-f635-479b-8510-ff32b325418f</Value>
+          <EntityType>Presentation</EntityType>
+        </PresentationId>
+        <Username>rdurand</Username>
+        <CreationDateUtc>2023-09-18T18:14:57.203Z</CreationDateUtc>
+        <CommentId>5d05c71d-97a6-480f-97e4-effc45c3ef80</CommentId>
+        <InnerXml>&lt;XmlComment xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
+  &lt;Body&gt;The presentation was published to Mediasite.&lt;/Body&gt;
+  &lt;CommentType&gt;Publish&lt;/CommentType&gt;
+&lt;/XmlComment&gt;</InnerXml>
+      </PresentationComment>
+      <PresentationComment>
+        <PresentationId>
+          <Value>cb53348f-f635-479b-8510-ff32b325418f</Value>
+          <EntityType>Presentation</EntityType>
+        </PresentationId>
+        <Username>rdurand</Username>
+        <CreationDateUtc>2023-09-18T18:06:04.55Z</CreationDateUtc>
+        <CommentId>ebb3e86b-c91c-4ec3-bc8b-2532029569cb</CommentId>
+        <InnerXml>&lt;XmlComment xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
+  &lt;Body&gt;The presentation was published to Mediasite.&lt;/Body&gt;
+  &lt;CommentType&gt;Publish&lt;/CommentType&gt;
+&lt;/XmlComment&gt;</InnerXml>
+      </PresentationComment>
+    </PresentationComments>
+    <CustomFieldDefinitions />
+    <CustomFields />
+    <CustomEntityAssociations />
+    <EditorEmails />
+    <ApproverEmails />
+    <ModeratorEmails />
+    <ViewerEmails />
+    <Tags />
+  </Properties>
+</LocalPresentationManifest>
