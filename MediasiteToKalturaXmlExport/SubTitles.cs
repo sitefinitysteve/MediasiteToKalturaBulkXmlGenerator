@@ -20,7 +20,13 @@ namespace MediasiteToKalturaXmlExport
     public class SubTitle
     { 
         [XmlAttribute("isDefault")]
-        public bool IsDefault { get; set; } = false;
+        public bool IsDefault { get; set; } = true;
+
+        [XmlAttribute("label")]
+        public string Label { get; set; } = "Mediasite";
+
+        [XmlAttribute("lang")]
+        public string Language { get; set; } = "English";
 
         [XmlAttribute("format")]
         public int Format { get; set; } = 2;

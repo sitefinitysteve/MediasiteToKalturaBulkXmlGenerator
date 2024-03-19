@@ -61,7 +61,7 @@ foreach (var f in folders)
             .Element("Title")
             .Value;
 
-        newItem.Name = title;
+        newItem.Name = "TEST - " + title;
 
 
         newItem.Categories.Items.Add(_rootCategoryId);
@@ -200,13 +200,24 @@ static string GetVideoAndSlides(string _basePath, string folderName, Item newIte
         videoNodes = contentNodes.Descendants("StreamType").Where(x => x.Value == "4").Select(x => x.Parent).FirstOrDefault();
     }
 
-    //Get the child node "PresentationContent" nodes regardless of depth where the MediaType is video/mp4
-    var presentationContent = videoNodes?.Descendants("PresentationContent").Where(x => x.Element("MimeType")?.Value == "video/mp4").FirstOrDefault();
-    
-    newItem.MsDuration = Convert.ToInt32(presentationContent.Element("Length")?.Value);
+    var mp4Nodes = new List<XElement>();
+    foreach(var p in xdoc.Descendants("PresentationContent"))
+    {
+        if(p.Element("MimeType")?.Value == "video/mp4")
+        {
+            mp4Nodes.Add(p);
+        }
+    }
+
+    //Order the mp4Nodes by the FileLength element
+    mp4Nodes = mp4Nodes.OrderBy(x => x.Element("Length")?.Value).ToList();
+
+    var smallestNode = mp4Nodes.FirstOrDefault();
+   
+    newItem.MsDuration = Convert.ToInt32(smallestNode.Element("Length")?.Value);
 
     //Get the filename from the videoNode
-    fileName = presentationContent?.Element("FileName")?.Value ?? "";
+    fileName = smallestNode?.Element("FileName")?.Value ?? "";
 
     //Slides
     var slideContent = videoNodes.Descendants("SlideContent").FirstOrDefault();
@@ -216,28 +227,31 @@ static string GetVideoAndSlides(string _basePath, string folderName, Item newIte
         if(slides.Count() > 0)
         {
             var filenameBase = slideContent.Element("FileName")?.Value;
-            int index = 1;
             foreach(var slide in slides)
             {
-                var newSlide = new Slide();
-                newSlide.Index = int.Parse(slide.Element("Number").Value);
-                newSlide.Time = int.Parse(slide.Element("Time").Value);
+                var index = int.Parse(slide.Element("Number").Value);
+
+                var newSlide = new SceneCuePoint()
+                {
+                     Title = $"Slide {index}",
+                };
+
+                
+                var slideTime = int.Parse(slide.Element("Time").Value);
+
+                newSlide.SceneStartTime = MillisecondsToTimeString(slideTime);
+                newSlide.Description = $"Slide {index} @ {newSlide.SceneStartTime}";
+                
 
                 //Filename base has {0:D4} in it, I need to get the number after the D to know the digits
                 var digits = int.Parse(filenameBase.Substring(filenameBase.IndexOf("{0:D") + 4, 1));
 
                 //The indexname now needs to be as long as the digit number, like 0001 or 0010
-                newSlide.Filename = $"{filenameBase.Substring(0, filenameBase.IndexOf("{0:D"))}{newSlide.Index.ToString($"D{digits}")}_full.jpg";
-                newSlide.Resource.Url = $@"{_basePath}{encodedName}/Content/{newSlide.Filename}";
-                newItem.Slides.Items.Add(newSlide);
-
-                //newItem.Attachments.Items.Add(new Attachment() { 
-                //    Resource = new Resource() { Url = newSlide.Resource.Url } ,
-                //    Filename = newSlide.Filename,
-                //    Title = $"Slide {index}"
-                //});
-
-                index++;
+                
+                var slideFilename = $"{filenameBase.Substring(0, filenameBase.IndexOf("{0:D"))}{index.ToString($"D{digits}")}_full.jpg";
+                newSlide.Scene.Resource.Url = $@"{_basePath}{encodedName}/Content/{slideFilename}";
+                
+                newItem.Scenes.CuePoints.Add(newSlide);
             }
         }
     }
@@ -279,6 +293,17 @@ static Description GetDescription(XmlDocument doc, Guid msId)
 
 
     return description;
+}
+
+static string MillisecondsToTimeString(int milliseconds)
+{
+    int seconds = milliseconds / 1000;
+    int minutes = seconds / 60;
+    int hours = minutes / 60;
+    seconds %= 60;
+    minutes %= 60;
+
+    return $"{hours:00}:{minutes:00}:{seconds:00}";
 }
 
 static string EncodeFolderName(string folderName)

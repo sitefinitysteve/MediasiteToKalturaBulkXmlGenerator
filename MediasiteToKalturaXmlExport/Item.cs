@@ -68,13 +68,13 @@ namespace MediasiteToKalturaXmlExport
         [XmlElement("thumbnails")]
         public Thumbnails Thumbnails { get; set; } = new Thumbnails();
 
-        [XmlIgnore]
-        public Slides Slides { get; set; } = new Slides();
-
         [XmlElement("attachments")]
         public Attachments Attachments { get; set; } = new Attachments();
 
         [XmlElement("subTitles")]
         public SubTitles SubTitle { get; set; } = new SubTitles();
+
+        [XmlElement("scenes")]
+        public Scenes Scenes { get; set; } = new Scenes();
     }
 }
