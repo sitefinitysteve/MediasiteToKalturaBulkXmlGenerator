@@ -7,20 +7,23 @@ using System.Xml.Serialization;
 
 namespace MediasiteToKalturaXmlExport
 {
-    [XmlType("thumbnails")]
-    public class Thumbnails
+    [XmlType("slides")]
+    public class Slides
     {
-        [XmlElement("thumbnail")]
-        public List<Thumbnail> Items { get; set; } = new List<Thumbnail>();
+        [XmlElement("slide")]
+        public List<Slide> Items { get; set; } = new List<Slide>();
 
     }
 
-    [XmlType("thumbnail")]
-    public class Thumbnail
+    [XmlType("slide")]
+    public class Slide
     {
-        [XmlAttribute("isDefault")]
-        public bool IsDefault { get; set; } = false;
-
+        [XmlElement("index")]
+        public int Index { get; set; }
+        [XmlElement("filename")]
+        public string Filename { get; set; }
+        [XmlElement("time")]
+        public int Time { get; set; }
         [XmlElement("urlContentResource")]
         public Resource Resource { get; set; } = new Resource();
     }

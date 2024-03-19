@@ -14,6 +14,9 @@ namespace MediasiteToKalturaXmlExport
     [XmlType("mrss")]
     public class Mrss
     {
+        [XmlAttribute(Namespace = "http://www.w3.org/2001/XMLSchema-instance", AttributeName = "noNamespaceSchemaLocation")]
+        public string Xmlns { get; set; } = "http://www.kaltura.com/api_v3/index.php/service/schema/action/serve/type/bulkUploadXml.bulkUploadXML/name/bulkUploadXml.bulkUploadXML.xsd";
+
         [XmlElement("channel")]
         public Channel Channel { get; set; } = new Channel();
     }
@@ -56,6 +59,9 @@ namespace MediasiteToKalturaXmlExport
         [XmlElement("media")]
         public Media Media { get; set; } = new Media();
 
+        [XmlElement("msDuration")]
+        public int MsDuration { get; set; } = 0;
+
         [XmlElement("contentAssets")]
         public ContentAssets ContentAssets { get; set; } = new ContentAssets();
 
@@ -63,6 +69,12 @@ namespace MediasiteToKalturaXmlExport
         public Thumbnails Thumbnails { get; set; } = new Thumbnails();
 
         [XmlIgnore]
-        public List<Slide> Slides { get; set; } = new List<Slide>();
+        public Slides Slides { get; set; } = new Slides();
+
+        [XmlElement("attachments")]
+        public Attachments Attachments { get; set; } = new Attachments();
+
+        [XmlElement("subTitles")]
+        public SubTitles SubTitle { get; set; } = new SubTitles();
     }
 }

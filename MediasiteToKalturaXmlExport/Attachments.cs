@@ -2,26 +2,29 @@
 
 using System;
 using System.Linq;
+using System.Net.Mail;
 using System.Reflection.Metadata;
 using System.Xml.Serialization;
 
 namespace MediasiteToKalturaXmlExport
 {
-    [XmlType("thumbnails")]
-    public class Thumbnails
+    [XmlType("attachments")]
+    public class Attachments
     {
-        [XmlElement("thumbnail")]
-        public List<Thumbnail> Items { get; set; } = new List<Thumbnail>();
+        [XmlElement("attachment")]
+        public List<Attachment> Items { get; set; } = new List<Attachment>();
 
     }
 
-    [XmlType("thumbnail")]
-    public class Thumbnail
+    [XmlType("attachment")]
+    public class Attachment
     {
-        [XmlAttribute("isDefault")]
-        public bool IsDefault { get; set; } = false;
-
         [XmlElement("urlContentResource")]
         public Resource Resource { get; set; } = new Resource();
+        [XmlElement("filename")]
+        public string Filename { get; set; }
+
+        [XmlElement("title")]
+        public string Title { get; set; }
     }
 }

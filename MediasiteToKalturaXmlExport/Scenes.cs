@@ -4,24 +4,27 @@ using System;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Xml.Serialization;
-
+/*
 namespace MediasiteToKalturaXmlExport
 {
-    [XmlType("thumbnails")]
-    public class Thumbnails
+    [XmlType("scenes")]
+    public class Scenes
     {
-        [XmlElement("thumbnail")]
-        public List<Thumbnail> Items { get; set; } = new List<Thumbnail>();
+        [XmlElement("slide")]
+        public List<Slide> Items { get; set; } = new List<Slide>();
 
     }
 
-    [XmlType("thumbnail")]
-    public class Thumbnail
+    [XmlType("slide")]
+    public class Slide
     {
-        [XmlAttribute("isDefault")]
-        public bool IsDefault { get; set; } = false;
-
+        [XmlElement("index")]
+        public int Index { get; set; }
+        [XmlElement("filename")]
+        public string Filename { get; set; }
+        [XmlElement("time")]
+        public int Time { get; set; }
         [XmlElement("urlContentResource")]
         public Resource Resource { get; set; } = new Resource();
     }
-}
+}*/

@@ -4,6 +4,7 @@
 
 //Get all folders under /Files/MediaSite
 using System.Diagnostics;
+using System.Security.Cryptography;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -32,74 +33,114 @@ if (System.IO.File.Exists(@"..\..\..\export\export_errors.xml"))
 foreach (var f in folders)
 {
     var folderName = System.IO.Path.GetFileName(f);
-    var encodedName = EncodeFolderName(folderName);
-    var newItem = new Item();
 
-    //Open the MediasitePresentation_70.xml file for reading
-    var xml = System.IO.File.ReadAllText(f + @"\MediasitePresentation_70.xml");
-    var doc = new XmlDocument();
-    doc.LoadXml(xml);
-    var xdoc = XDocument.Parse(xml);
-
-    //Get presentation title from the xdoc
-    Guid msId = new Guid(xdoc.Element("LocalPresentationManifest")
-                          .Element("Properties")
-                          .Element("Presentation")
-                          .Element("Id")
-                          .Element("Value").Value);
-
-    string title = xdoc.Element("LocalPresentationManifest")
-                          .Element("Properties")
-                          .Element("Presentation")
-                          .Element("Title").Value;
-
-    newItem.Name = title;
-
-
-    newItem.Categories.Items.Add(_rootCategoryId);
-
-    newItem.Media.Items.Add("1");
-
-    //Video URL
-    newItem.ContentAssets.Content.Resource.Url = GetVideoAndSlides(_basePath, folderName, newItem, doc);
-    if(!newItem.ContentAssets.Content.Resource.Url.Contains(".mp4"))
+    //if(folderName == "2018 MF5 LGS - Substance Abuse - Nov 7, 2016.export")
+    if(true)
     {
-        newItem.Error = true;
-    }
+        var encodedName = EncodeFolderName(folderName);
+        var newItem = new Item();
 
-    //Get description json
-    var desc = GetDescription(doc, msId); ;
-    newItem.Description = ServiceStack.Text.JsonSerializer.SerializeToString(desc);
+        //Open the MediasitePresentation_70.xml file for reading
+        var xml = System.IO.File.ReadAllText(f + @"\MediasitePresentation_70.xml");
+        var doc = new XmlDocument();
+        doc.LoadXml(xml);
+        var xdoc = XDocument.Parse(xml);
 
-    //Add tags
-    newItem.Tags.Items.Add("Medportal");
-    newItem.Tags.Items.Add("Mediasite");
+        //Get presentation title from the xdoc
+        Guid msId = new Guid(
+            xdoc.Element("LocalPresentationManifest")
+                .Element("Properties")
+                .Element("Presentation")
+                .Element("Id")
+                .Element("Value")
+                .Value);
 
-    foreach(var p in desc.Presenters)
-    {
-        newItem.Tags.Items.Add(p);
-    }
+        string title = xdoc.Element("LocalPresentationManifest")
+            .Element("Properties")
+            .Element("Presentation")
+            .Element("Title")
+            .Value;
 
-    //Thumbnails
-    var thumbNode = doc.SelectSingleNode("/LocalPresentationManifest/Properties/ContentRevisions/ContentRevision/ThumbnailContent/FileName");
-    if(thumbNode != null)
-    {
-        var thumb = new Thumbnail();
-        thumb.Resource.Url = $@"{_basePath}{encodedName}\Content\{thumbNode.InnerText}";
-        newItem.Thumbnails.Items.Add(thumb);
+        newItem.Name = title;
 
-        //Set the default thumbnail
-        newItem.Thumbnails.IsDefault = true;
-    }
 
-    //Add the item to the media object
-    if (newItem.Error)
-    {
-        errors.Add(newItem);
-    }
-    else
-    {
-        media.Channel.Items.Add(newItem);
+        newItem.Categories.Items.Add(_rootCategoryId);
+
+        newItem.Media.Items.Add("1");
+
+        //Video URL
+        newItem.ContentAssets.Content.Resource.Url = GetVideoAndSlides(_basePath, folderName, newItem, doc);
+        if(!newItem.ContentAssets.Content.Resource.Url.Contains(".mp4"))
+        {
+            newItem.Error = true;
+        }
+
+        //Get description json
+        var desc = GetDescription(doc, msId);
+        ;
+        newItem.Description = ServiceStack.Text.JsonSerializer.SerializeToString(desc);
+
+        //Add tags
+        newItem.Tags.Items.Add("Medportal");
+        newItem.Tags.Items.Add("Mediasite");
+
+        foreach(var p in desc.Presenters)
+        {
+            newItem.Tags.Items.Add(p);
+        }
+
+        //Thumbnails
+        var thumbNode = doc.SelectSingleNode("/LocalPresentationManifest/Properties/ContentRevisions/ContentRevision/ThumbnailContent/FileName");
+        if(thumbNode != null)
+        {
+            var thumb = new Thumbnail();
+            thumb.Resource.Url = $@"{_basePath}{encodedName}/Content/{thumbNode.InnerText}";
+            thumb.IsDefault = true;
+
+            newItem.Thumbnails.Items.Add(thumb);
+        }
+
+        //Look for captions
+        var captionNode = doc.SelectSingleNode("//CaptionContent");
+        if(captionNode != null)
+        {
+            var caption = new SubTitle();
+            var captionFileName = captionNode.SelectSingleNode("FileName").InnerText;
+            caption.Resource.Url = $@"{_basePath}{encodedName}/Content/{captionFileName}";
+
+            if (captionFileName.ToLower().EndsWith("srt"))
+            {
+                caption.Format = 1;
+            }else if (captionFileName.ToLower().EndsWith("dfxp"))
+            {
+                caption.Format = 2;
+            }
+            else if (captionFileName.ToLower().EndsWith("webvtt"))
+            {
+                caption.Format = 3;
+            }
+            else if (captionFileName.ToLower().EndsWith("cap"))
+            {
+                caption.Format = 4;
+            }
+            else if (captionFileName.ToLower().EndsWith("scc"))
+            {
+                caption.Format = 5;
+            }
+
+            caption.Tags.Add(new SubTitleTag() { Tag = $"Format {caption.Format}" });
+
+            newItem.SubTitle.Items.Add(caption);
+        }
+
+        //Add the item to the media object
+        if (newItem.Error)
+        {
+            errors.Add(newItem);
+        } else
+        {
+            media.Channel.Items.Add(newItem);
+        }
     }
 }
 
@@ -148,7 +189,7 @@ static string GetVideoAndSlides(string _basePath, string folderName, Item newIte
     var contentNodes = streams.Descendants("ContentStream");
 
     XElement? videoNodes;
-    if (streams.Count() == 1)
+    if (contentNodes.Count() == 1)
     {
         //videoNodes = contentNodes.Cast<XmlNode>().Where(x => x != null);
         videoNodes = contentNodes.Descendants("StreamType").Select(x => x.Parent).FirstOrDefault();
@@ -162,6 +203,8 @@ static string GetVideoAndSlides(string _basePath, string folderName, Item newIte
     //Get the child node "PresentationContent" nodes regardless of depth where the MediaType is video/mp4
     var presentationContent = videoNodes?.Descendants("PresentationContent").Where(x => x.Element("MimeType")?.Value == "video/mp4").FirstOrDefault();
     
+    newItem.MsDuration = Convert.ToInt32(presentationContent.Element("Length")?.Value);
+
     //Get the filename from the videoNode
     fileName = presentationContent?.Element("FileName")?.Value ?? "";
 
@@ -173,8 +216,8 @@ static string GetVideoAndSlides(string _basePath, string folderName, Item newIte
         if(slides.Count() > 0)
         {
             var filenameBase = slideContent.Element("FileName")?.Value;
-            
-            foreach (var slide in slides)
+            int index = 1;
+            foreach(var slide in slides)
             {
                 var newSlide = new Slide();
                 newSlide.Index = int.Parse(slide.Element("Number").Value);
@@ -184,14 +227,22 @@ static string GetVideoAndSlides(string _basePath, string folderName, Item newIte
                 var digits = int.Parse(filenameBase.Substring(filenameBase.IndexOf("{0:D") + 4, 1));
 
                 //The indexname now needs to be as long as the digit number, like 0001 or 0010
-                newSlide.Filename = $"{filenameBase.Substring(0, filenameBase.IndexOf("{0:D"))}{newSlide.Index.ToString($"D{digits}")}.jpg";
+                newSlide.Filename = $"{filenameBase.Substring(0, filenameBase.IndexOf("{0:D"))}{newSlide.Index.ToString($"D{digits}")}_full.jpg";
+                newSlide.Resource.Url = $@"{_basePath}{encodedName}/Content/{newSlide.Filename}";
+                newItem.Slides.Items.Add(newSlide);
 
-                newItem.Slides.Add(newSlide);
+                //newItem.Attachments.Items.Add(new Attachment() { 
+                //    Resource = new Resource() { Url = newSlide.Resource.Url } ,
+                //    Filename = newSlide.Filename,
+                //    Title = $"Slide {index}"
+                //});
+
+                index++;
             }
         }
     }
 
-    var videoUrl = $@"{_basePath}{encodedName}\Content\{fileName}";
+    var videoUrl = $@"{_basePath}{encodedName}/Content/{fileName}";
     return videoUrl;
    
 }
