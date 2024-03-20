@@ -13,6 +13,21 @@ using System;
 
 
 #region Config
+//Valdiate config files exist
+if (!System.IO.File.Exists("appsettings.json"))
+{
+    Console.WriteLine("appsettings.json not found, refer to README for sample");
+    Console.ReadLine();
+    return;
+}
+
+if (!System.IO.File.Exists("mediasiteToKalturaMap.json"))
+{
+    Console.WriteLine("mediasiteToKalturaMap.json not found, refer to README for sample");
+    Console.ReadLine();
+    return;
+}
+
 var config = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .Build();
