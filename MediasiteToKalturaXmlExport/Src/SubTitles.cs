@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Xml.Serialization;
 
-namespace MediasiteToKalturaXmlExport
+namespace MediasiteToKalturaXmlExport.Src
 {
     [XmlType("subTitles")]
     public class SubTitles
@@ -18,7 +18,7 @@ namespace MediasiteToKalturaXmlExport
 
     [XmlType("subTitle")]
     public class SubTitle
-    { 
+    {
         [XmlAttribute("isDefault")]
         public bool IsDefault { get; set; } = true;
 

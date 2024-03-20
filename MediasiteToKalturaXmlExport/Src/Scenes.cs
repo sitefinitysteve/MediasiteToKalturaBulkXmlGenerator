@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Xml.Serialization;
 
-namespace MediasiteToKalturaXmlExport
+namespace MediasiteToKalturaXmlExport.Src
 {
     [XmlType("scenes")]
     public class Scenes

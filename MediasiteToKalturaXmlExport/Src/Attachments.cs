@@ -6,7 +6,7 @@ using System.Net.Mail;
 using System.Reflection.Metadata;
 using System.Xml.Serialization;
 
-namespace MediasiteToKalturaXmlExport
+namespace MediasiteToKalturaXmlExport.Src
 {
     [XmlType("attachments")]
     public class Attachments

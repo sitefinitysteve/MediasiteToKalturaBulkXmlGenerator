@@ -4,12 +4,12 @@ using System;
 using System.Linq;
 using System.Xml.Serialization;
 
-namespace MediasiteToKalturaXmlExport
+namespace MediasiteToKalturaXmlExport.Src
 {
-    [XmlType("tags")]
-    public class Tags
+    [XmlType("media")]
+    public class Media
     {
-        [XmlElement("tag")]
+        [XmlElement("mediaType")]
         public List<string> Items { get; set; } = new List<string>();
     }
 }

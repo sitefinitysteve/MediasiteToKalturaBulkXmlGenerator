@@ -1,146 +1,177 @@
 ﻿#pragma warning disable CS8602 // Dereference of a possibly null reference.
 
-//Loop through all folders in C:\GitHub\Medportal\Medportal.Sitefinity\Files\Mediasite
-
-//Get all folders under /Files/MediaSite
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Xml;
 using System.Xml.Linq;
+using System.Configuration;
 using System.Xml.Serialization;
 using MediasiteToKalturaXmlExport;
+using MediasiteToKalturaXmlExport.Src;
+using Microsoft.Extensions.Configuration;
+using System;
 
-const string _rootCategoryId = "331852402";
-const string _basePath = "https://www.medportal.ca/Files/Mediasite/";
+
+#region Config
+var config = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .Build();
+
+string _defaultKaltruaCategoryId = config.GetValue<string>("DefaultKalturaCategory");
+string _basePath = config.GetValue<string>("RemoteBasePath");
+
+if (!_basePath.EndsWith("/"))
+{
+    _basePath += "/";
+}
+
+var map = new ConfigurationBuilder()
+    .AddJsonFile("mediasiteToKalturaMap.json", optional: false, reloadOnChange: true)
+    .Build();
+
+#endregion
 
 var media = new Mrss();
 var errors = new List<Item>();
 
-var folders = System.IO.Directory.GetDirectories(@"C:\GitHub\Medportal\Medportal.Sitefinity\Files\Mediasite");
+var folders = System.IO.Directory.GetDirectories(config.GetValue<string>("RootMediasiteFolderToParse"));
 
-//Delete files if they exist
-if (System.IO.File.Exists(@"..\..\..\export\export.xml"))
+//Make sure the export folder exists
+if (!System.IO.Directory.Exists("export"))
 {
-    System.IO.File.Delete(@"..\..\..\export\export.xml");
+    System.IO.Directory.CreateDirectory("export");
 }
 
-if (System.IO.File.Exists(@"..\..\..\export\export_errors.xml"))
+//Delete export files if they exist
+if (System.IO.File.Exists(@"export\export.xml"))
 {
-    System.IO.File.Delete(@"..\..\..\export\export_errors.xml");
+    System.IO.File.Delete(@"export\export.xml");
 }
+
+if (System.IO.File.Exists(@"export\export_errors.xml"))
+{
+    System.IO.File.Delete(@"export\export_errors.xml");
+}
+
+
+var mediaSiteMaps = map.GetSection("Mapping").Get<List<MediaSiteMap>>();
 
 //Loop through each folder
 foreach (var f in folders)
 {
     var folderName = System.IO.Path.GetFileName(f);
+    var encodedName = EncodeFolderName(folderName);
+    var newItem = new Item();
 
-    //if(folderName == "2018 MF5 LGS - Substance Abuse - Nov 7, 2016.export")
-    if(true)
-    {
-        var encodedName = EncodeFolderName(folderName);
-        var newItem = new Item();
+    //Open the MediasitePresentation_70.xml file for reading
+    var xml = System.IO.File.ReadAllText(f + @"\MediasitePresentation_70.xml");
+    var doc = new XmlDocument();
+    doc.LoadXml(xml);
+    var xdoc = XDocument.Parse(xml);
 
-        //Open the MediasitePresentation_70.xml file for reading
-        var xml = System.IO.File.ReadAllText(f + @"\MediasitePresentation_70.xml");
-        var doc = new XmlDocument();
-        doc.LoadXml(xml);
-        var xdoc = XDocument.Parse(xml);
-
-        //Get presentation title from the xdoc
-        Guid msId = new Guid(
-            xdoc.Element("LocalPresentationManifest")
-                .Element("Properties")
-                .Element("Presentation")
-                .Element("Id")
-                .Element("Value")
-                .Value);
-
-        string title = xdoc.Element("LocalPresentationManifest")
+    //Get presentation title from the xdoc
+    Guid msId = new Guid(
+        xdoc.Element("LocalPresentationManifest")
             .Element("Properties")
             .Element("Presentation")
-            .Element("Title")
-            .Value;
+            .Element("Id")
+            .Element("Value")
+            .Value);
 
-        newItem.Name = "TEST - " + title;
+    string title = xdoc.Element("LocalPresentationManifest")
+        .Element("Properties")
+        .Element("Presentation")
+        .Element("Title")
+        .Value;
+    
+    newItem.Name = $"{config.GetValue<string>("VideoTitlePrefix")}{title}";
+    
+    newItem.Media.Items.Add("1");
 
+    //Video URL
+    newItem.ContentAssets.Content.Resource.Url = GetVideoAndSlides(_basePath, folderName, newItem, doc);
+    if(!newItem.ContentAssets.Content.Resource.Url.Contains(".mp4"))
+    {
+        newItem.Error = true;
+    }
 
-        newItem.Categories.Items.Add(_rootCategoryId);
+    //Get description json
+    var desc = GetDescription(doc, msId);
+    
+    newItem.Description = ServiceStack.Text.JsonSerializer.SerializeToString(desc.GetDTO());
 
-        newItem.Media.Items.Add("1");
-
-        //Video URL
-        newItem.ContentAssets.Content.Resource.Url = GetVideoAndSlides(_basePath, folderName, newItem, doc);
-        if(!newItem.ContentAssets.Content.Resource.Url.Contains(".mp4"))
+    desc.FolderIds.Reverse();
+    foreach (Guid guid in desc.FolderIds)
+    {
+        // Process each Guid in reverse order
+        var mapItem = mediaSiteMaps.FirstOrDefault(x => x.Mediasite.StartsWith(guid.ToString().Replace("-","")));
+        if(mapItem != null)
         {
-            newItem.Error = true;
+            newItem.Categories.Items.Add(mapItem.Kaltura);
+            break;
+        }
+    }
+
+    //Add tags
+    newItem.Tags.Items.Add("Medportal");
+    newItem.Tags.Items.Add("Mediasite");
+
+    foreach(var p in desc.Presenters)
+    {
+        newItem.Tags.Items.Add(p);
+    }
+
+    //Thumbnails
+    var thumbNode = doc.SelectSingleNode("/LocalPresentationManifest/Properties/ContentRevisions/ContentRevision/ThumbnailContent/FileName");
+    if(thumbNode != null)
+    {
+        var thumb = new Thumbnail();
+        thumb.Resource.Url = $@"{_basePath}{encodedName}/Content/{thumbNode.InnerText}";
+        thumb.IsDefault = true;
+
+        newItem.Thumbnails.Items.Add(thumb);
+    }
+
+    //Look for captions
+    var captionNode = doc.SelectSingleNode("//CaptionContent");
+    if(captionNode != null)
+    {
+        var caption = new SubTitle();
+        var captionFileName = captionNode.SelectSingleNode("FileName").InnerText;
+        caption.Resource.Url = $@"{_basePath}{encodedName}/Content/{captionFileName}";
+
+        if (captionFileName.ToLower().EndsWith("srt"))
+        {
+            caption.Format = 1;
+        }else if (captionFileName.ToLower().EndsWith("dfxp"))
+        {
+            caption.Format = 2;
+        }
+        else if (captionFileName.ToLower().EndsWith("webvtt"))
+        {
+            caption.Format = 3;
+        }
+        else if (captionFileName.ToLower().EndsWith("cap"))
+        {
+            caption.Format = 4;
+        }
+        else if (captionFileName.ToLower().EndsWith("scc"))
+        {
+            caption.Format = 5;
         }
 
-        //Get description json
-        var desc = GetDescription(doc, msId);
-        ;
-        newItem.Description = ServiceStack.Text.JsonSerializer.SerializeToString(desc);
+        caption.Tags.Add(new SubTitleTag() { Tag = $"Format {caption.Format}" });
 
-        //Add tags
-        newItem.Tags.Items.Add("Medportal");
-        newItem.Tags.Items.Add("Mediasite");
+        newItem.SubTitle.Items.Add(caption);
+    }
 
-        foreach(var p in desc.Presenters)
-        {
-            newItem.Tags.Items.Add(p);
-        }
-
-        //Thumbnails
-        var thumbNode = doc.SelectSingleNode("/LocalPresentationManifest/Properties/ContentRevisions/ContentRevision/ThumbnailContent/FileName");
-        if(thumbNode != null)
-        {
-            var thumb = new Thumbnail();
-            thumb.Resource.Url = $@"{_basePath}{encodedName}/Content/{thumbNode.InnerText}";
-            thumb.IsDefault = true;
-
-            newItem.Thumbnails.Items.Add(thumb);
-        }
-
-        //Look for captions
-        var captionNode = doc.SelectSingleNode("//CaptionContent");
-        if(captionNode != null)
-        {
-            var caption = new SubTitle();
-            var captionFileName = captionNode.SelectSingleNode("FileName").InnerText;
-            caption.Resource.Url = $@"{_basePath}{encodedName}/Content/{captionFileName}";
-
-            if (captionFileName.ToLower().EndsWith("srt"))
-            {
-                caption.Format = 1;
-            }else if (captionFileName.ToLower().EndsWith("dfxp"))
-            {
-                caption.Format = 2;
-            }
-            else if (captionFileName.ToLower().EndsWith("webvtt"))
-            {
-                caption.Format = 3;
-            }
-            else if (captionFileName.ToLower().EndsWith("cap"))
-            {
-                caption.Format = 4;
-            }
-            else if (captionFileName.ToLower().EndsWith("scc"))
-            {
-                caption.Format = 5;
-            }
-
-            caption.Tags.Add(new SubTitleTag() { Tag = $"Format {caption.Format}" });
-
-            newItem.SubTitle.Items.Add(caption);
-        }
-
-        //Add the item to the media object
-        if (newItem.Error)
-        {
-            errors.Add(newItem);
-        } else
-        {
-            media.Channel.Items.Add(newItem);
-        }
+    //Add the item to the media object
+    if (newItem.Error)
+    {
+        errors.Add(newItem);
+    } else
+    {
+        media.Channel.Items.Add(newItem);
     }
 }
 
@@ -155,7 +186,7 @@ using (StringWriter stringwriter = new System.IO.StringWriter())
 }
 
 var prettyDoc = XDocument.Parse(xmlResult);
-System.IO.File.WriteAllText(@"..\..\..\export\export.xml", prettyDoc.ToString());
+System.IO.File.WriteAllText(@"export\export.xml", prettyDoc.ToString());
 #endregion
 
 #region Errors
@@ -167,7 +198,7 @@ using (StringWriter stringwriter = new System.IO.StringWriter())
 }
 
 prettyDoc = XDocument.Parse(xmlResult);
-System.IO.File.WriteAllText(@"..\..\..\export\export_errors.xml", prettyDoc.ToString());
+System.IO.File.WriteAllText(@"export\export_errors.xml", prettyDoc.ToString());
 #endregion
 
 
@@ -273,6 +304,7 @@ static Description GetDescription(XmlDocument doc, Guid msId)
         if (folderTitle.ToLower() != "mediasite" && folderTitle.ToLower() != "medportal")
         {
             oldPath += $"/{folderTitle}";
+            description.FolderIds.Add(new Guid(folderNode.SelectSingleNode("Id//Value").InnerText));
         }
     }
     description.LegacyFolderStructure = oldPath;
