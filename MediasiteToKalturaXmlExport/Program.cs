@@ -60,6 +60,12 @@ var mediaSiteMaps = map.GetSection("Mapping").Get<List<MediaSiteMap>>();
 foreach (var f in folders)
 {
     var folderName = System.IO.Path.GetFileName(f);
+    //Remove .zip from the end of the folder if it exist
+    if (folderName.EndsWith(".zip"))
+    {
+        folderName = folderName.Substring(0, folderName.Length - 4);
+    }
+
     var encodedName = EncodeFolderName(folderName);
     var newItem = new Item();
 
@@ -314,7 +320,7 @@ static Description GetDescription(XmlDocument doc, Guid msId)
     var presenters = doc.SelectNodes("/LocalPresentationManifest/Properties/Presentation/Presenters/PresentationPresenter");
     foreach (XmlNode presenter in presenters)
     {
-        var prefix = presenter.SelectSingleNode("Prefix").InnerText;
+        var prefix = presenter.SelectSingleNode("Prefix")?.InnerText;
         var firstName = presenter.SelectSingleNode("FirstName").InnerText;
         var lastName = presenter.SelectSingleNode("LastName").InnerText;
 
