@@ -326,7 +326,11 @@ static Description GetDescription(XmlDocument doc, Guid msId)
 
         //Combine values, ignore prefix if empty
         var presenterName = string.IsNullOrEmpty(prefix) ? $"{firstName} {lastName}" : $"{prefix} {firstName} {lastName}";
-        description.Presenters.Add(presenterName);
+
+        if(!description.Presenters.Contains(presenterName))
+        {
+            description.Presenters.Add(presenterName);
+        }
     }
 
 
