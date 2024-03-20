@@ -53,3 +53,5 @@ appsettings.json
 
 * This was generated from our older version of mediasites XML, mileage may vary
 * Attachments is commented out, we didn't have any videos with attachments to test with. But before the cuepoints worked we experimented with slides being attachments but abandoned that approach when there was a limit of 30 attachments per video.
+* Obviously the exported mediasite videos need to be on a publically accessible URL for Kaltura to injest
+* Make sure your webserver has exposed the mime types for the closed captioned files (.dfxp is application/ffaf+xml for example) or kaltura will not be able to read them
