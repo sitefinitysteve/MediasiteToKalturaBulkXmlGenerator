@@ -110,10 +110,13 @@ foreach (var f in folders)
     newItem.Media.Items.Add("1");
 
     //Video URL
-    newItem.ContentAssets.Content.Resource.Url = GetVideoAndSlides(_basePath, folderName, newItem, doc);
-    if(!newItem.ContentAssets.Content.Resource.Url.Contains(".mp4"))
+    string videoUrl = GetVideoAndSlides(_basePath, folderName, newItem, doc);
+    if(String.IsNullOrEmpty(videoUrl) || !videoUrl.Contains(".mp4"))
     {
         newItem.Error = true;
+    }else
+    {
+        newItem.ContentAssets.Content.Resource.Url = videoUrl;
     }
 
     //Get description json
@@ -250,6 +253,16 @@ static string GetVideoAndSlides(string _basePath, string folderName, Item newIte
     {
         //Filter nodes to where the StreamType has value 4
         videoNodes = contentNodes.Descendants("StreamType").Where(x => x.Value == "4").Select(x => x.Parent).FirstOrDefault();
+
+        if(videoNodes == null)
+        {
+            //I need to see if any contentNodes have child elements with the name "Slides"
+            var matches = contentNodes.FirstOrDefault(x => x.Descendants("SlideContent").Count() > 0);
+            if(matches != null)
+            {
+                videoNodes = matches.Parent;
+            }
+        }
     }
 
     var mp4Nodes = new List<XElement>();
@@ -259,6 +272,11 @@ static string GetVideoAndSlides(string _basePath, string folderName, Item newIte
         {
             mp4Nodes.Add(p);
         }
+    }
+
+   if(mp4Nodes.Count == 0)
+    {
+        return null;
     }
 
     //Order the mp4Nodes by the FileLength element
@@ -272,40 +290,43 @@ static string GetVideoAndSlides(string _basePath, string folderName, Item newIte
     fileName = smallestNode?.Element("FileName")?.Value ?? "";
 
     //Slides
-    var slideContent = videoNodes.Descendants("SlideContent").FirstOrDefault();
-    if (slideContent != null)
+    if(videoNodes != null)
     {
-        var slides = slideContent.Descendants("Slide");
-        if(slides.Count() > 0)
+        var slideContent = videoNodes.Descendants("SlideContent").FirstOrDefault();
+        if(slideContent != null)
         {
-            var filenameBase = slideContent.Element("FileName")?.Value;
-            foreach(var slide in slides)
+            var slides = slideContent.Descendants("Slide");
+            if(slides.Count() > 0)
             {
-                var index = int.Parse(slide.Element("Number").Value);
-
-                var newSlide = new SceneCuePoint()
+                var filenameBase = slideContent.Element("FileName")?.Value;
+                foreach(var slide in slides)
                 {
-                     Title = $"Slide {index}",
-                };
+                    var index = int.Parse(slide.Element("Number").Value);
 
-                
-                var slideTime = int.Parse(slide.Element("Time").Value);
+                    var newSlide = new SceneCuePoint() { Title = $"Slide {index}", };
 
-                newSlide.SceneStartTime = MillisecondsToTimeString(slideTime);
-                newSlide.Description = $"Slide {index} @ {newSlide.SceneStartTime}";
-                
 
-                //Filename base has {0:D4} in it, I need to get the number after the D to know the digits
-                var digits = int.Parse(filenameBase.Substring(filenameBase.IndexOf("{0:D") + 4, 1));
+                    var slideTime = int.Parse(slide.Element("Time").Value);
 
-                //The indexname now needs to be as long as the digit number, like 0001 or 0010
-                
-                var slideFilename = $"{filenameBase.Substring(0, filenameBase.IndexOf("{0:D"))}{index.ToString($"D{digits}")}_full.jpg";
-                newSlide.Scene.Resource.Url = $@"{_basePath}{encodedName}/Content/{slideFilename}";
-                
-                newItem.Scenes.CuePoints.Add(newSlide);
+                    newSlide.SceneStartTime = MillisecondsToTimeString(slideTime);
+                    newSlide.Description = $"Slide {index} @ {newSlide.SceneStartTime}";
+
+
+                    //Filename base has {0:D4} in it, I need to get the number after the D to know the digits
+                    var digits = int.Parse(filenameBase.Substring(filenameBase.IndexOf("{0:D") + 4, 1));
+
+                    //The indexname now needs to be as long as the digit number, like 0001 or 0010
+
+                    var slideFilename = $"{filenameBase.Substring(0, filenameBase.IndexOf("{0:D"))}{index.ToString($"D{digits}")}_full.jpg";
+                    newSlide.Scene.Resource.Url = $@"{_basePath}{encodedName}/Content/{slideFilename}";
+
+                    newItem.Scenes.CuePoints.Add(newSlide);
+                }
             }
         }
+    }else
+    {
+        //Debugger.Break();
     }
 
     var videoUrl = $@"{_basePath}{encodedName}/Content/{fileName}";
@@ -336,20 +357,36 @@ static Description GetDescription(XmlDocument doc, Guid msId)
     foreach (XmlNode presenter in presenters)
     {
         var prefix = presenter.SelectSingleNode("Prefix")?.InnerText;
-        var firstName = presenter.SelectSingleNode("FirstName").InnerText;
-        var lastName = presenter.SelectSingleNode("LastName").InnerText;
+        var firstName = presenter.SelectSingleNode("FirstName")?.InnerText;
+        var lastName = presenter.SelectSingleNode("LastName")?.InnerText;
+        var middleName = presenter.SelectSingleNode("MiddleName")?.InnerText;
 
-        //Combine values, ignore prefix if empty
-        var presenterName = string.IsNullOrEmpty(prefix) ? $"{firstName} {lastName}" : $"{prefix} {firstName} {lastName}";
+        //Build the presenter name by looking for each element
+        string presenterName = "";
+        presenterName = NameBuilder(presenterName, prefix);
+        presenterName = NameBuilder(presenterName, firstName);
+        presenterName = NameBuilder(presenterName, middleName);
+        presenterName = NameBuilder(presenterName, lastName);
 
         if(!description.Presenters.Contains(presenterName))
         {
-            description.Presenters.Add(presenterName);
+            description.Presenters.Add(presenterName.Trim());
         }
     }
 
 
     return description;
+}
+
+static string NameBuilder(string current, string newPart)
+{
+    if(!String.IsNullOrEmpty(newPart))
+    {
+        return $"{current} {newPart}";
+    }else
+    {
+        return current;
+    }
 }
 
 static string MillisecondsToTimeString(int milliseconds)
