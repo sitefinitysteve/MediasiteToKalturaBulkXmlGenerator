@@ -274,59 +274,62 @@ static string GetVideoAndSlides(string _basePath, string folderName, Item newIte
         }
     }
 
-   if(mp4Nodes.Count == 0)
+    if(mp4Nodes.Count == 0)
     {
-        return null;
+        //Okay in this case it's that it's probably STREAMING only, out work around is these are detected in advance, then we VOD export the video and place a "video.mp4" in the folder, then just fake this
+        fileName = "video.mp4";
+    } else
+    {
+        //Order the mp4Nodes by the FileLength element
+        mp4Nodes = mp4Nodes.OrderBy(x => x.Element("Length")?.Value).ToList();
+
+        var smallestNode = mp4Nodes.FirstOrDefault();
+
+        newItem.MsDuration = Convert.ToInt32(smallestNode.Element("Length")?.Value);
+
+        //Get the filename from the videoNode
+        fileName = smallestNode?.Element("FileName")?.Value ?? "";
     }
 
-    //Order the mp4Nodes by the FileLength element
-    mp4Nodes = mp4Nodes.OrderBy(x => x.Element("Length")?.Value).ToList();
-
-    var smallestNode = mp4Nodes.FirstOrDefault();
-   
-    newItem.MsDuration = Convert.ToInt32(smallestNode.Element("Length")?.Value);
-
-    //Get the filename from the videoNode
-    fileName = smallestNode?.Element("FileName")?.Value ?? "";
-
-    //Slides
-    if(videoNodes != null)
+    //Handle the slides
+    //Search for the first node that has a child element named "Slides"
+    var slideNodes = xdoc.Descendants("Slides").FirstOrDefault();
+    if(slideNodes != null)
     {
-        var slideContent = videoNodes.Descendants("SlideContent").FirstOrDefault();
-        if(slideContent != null)
+        var slideContent = slideNodes.Parent;
+
+        var slides = slideContent.Descendants("Slide");
+        if (slides.Count() > 0)
         {
-            var slides = slideContent.Descendants("Slide");
-            if(slides.Count() > 0)
+            var filenameBase = slideContent.Element("FileName")?.Value;
+            foreach (var slide in slides)
             {
-                var filenameBase = slideContent.Element("FileName")?.Value;
-                foreach(var slide in slides)
-                {
-                    var index = int.Parse(slide.Element("Number").Value);
+                var index = int.Parse(slide.Element("Number").Value);
 
-                    var newSlide = new SceneCuePoint() { Title = $"Slide {index}", };
+                var newSlide = new SceneCuePoint() { Title = $"Slide {index}", };
 
 
-                    var slideTime = int.Parse(slide.Element("Time").Value);
+                var slideTime = int.Parse(slide.Element("Time").Value);
 
-                    newSlide.SceneStartTime = MillisecondsToTimeString(slideTime);
-                    newSlide.Description = $"Slide {index} @ {newSlide.SceneStartTime}";
+                newSlide.SceneStartTime = MillisecondsToTimeString(slideTime);
+                newSlide.Description = $"Slide {index} @ {newSlide.SceneStartTime}";
 
 
-                    //Filename base has {0:D4} in it, I need to get the number after the D to know the digits
-                    var digits = int.Parse(filenameBase.Substring(filenameBase.IndexOf("{0:D") + 4, 1));
+                //Filename base has {0:D4} in it, I need to get the number after the D to know the digits
+                var digits = int.Parse(filenameBase.Substring(filenameBase.IndexOf("{0:D") + 4, 1));
 
-                    //The indexname now needs to be as long as the digit number, like 0001 or 0010
+                //The indexname now needs to be as long as the digit number, like 0001 or 0010
 
-                    var slideFilename = $"{filenameBase.Substring(0, filenameBase.IndexOf("{0:D"))}{index.ToString($"D{digits}")}_full.jpg";
-                    newSlide.Scene.Resource.Url = $@"{_basePath}{encodedName}/Content/{slideFilename}";
+                var slideFilename = $"{filenameBase.Substring(0, filenameBase.IndexOf("{0:D"))}{index.ToString($"D{digits}")}_full.jpg";
+                newSlide.Scene.Resource.Url = $@"{_basePath}{encodedName}/Content/{slideFilename}";
 
-                    newItem.Scenes.CuePoints.Add(newSlide);
-                }
+                newItem.Scenes.CuePoints.Add(newSlide);
             }
         }
-    }else
-    {
-        //Debugger.Break();
+        else
+        {
+            //Debugger.Break();
+        }
     }
 
     var videoUrl = $@"{_basePath}{encodedName}/Content/{fileName}";
