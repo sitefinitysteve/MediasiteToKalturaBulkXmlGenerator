@@ -35,6 +35,7 @@ appsettings.json
 	"RemoteBasePath": "https://www.yoursite.ca/Files/Mediasite/", 
 	"DefaultKalturaCategory": "331852402",
 	"VideoTitlePrefix":  "BULKTEST - "
+  "ValidateResourceUrlsBeforeExport": false
 }
 ```
 
@@ -44,6 +45,7 @@ appsettings.json
 | RemoteBasePath             | The base route to tell Kaltura to look for the files, so <path>/VideoFolder/...                                                                                 |
 | DefaultKalturaCategory     | If there's no old mediasite category id link found, use this as the default category to dump the media into                                                     |
 | VideoTitlePrefix           | (Optional) This is so the videos you test bulk upload can be found and deleted easier from the KMC.  When ready to run officially just blank out this property. |
+| ValidateResourceUrlsBeforeExport           | Before the export runs it'll ping (HEAD) all the urls specified to see if they return a 200 OK |
 
 ## Important Links
 * [Bulk Upload](https://knowledge.kaltura.com/help/uploading-and-ingestion)

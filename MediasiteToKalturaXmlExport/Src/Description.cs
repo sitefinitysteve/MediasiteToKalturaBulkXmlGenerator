@@ -12,6 +12,7 @@ namespace MediasiteToKalturaXmlExport.Src
         public string LegacyFolderStructure { get; set; }
         public List<string> Presenters { get; set; } = new List<string>();
         public List<Guid> FolderIds { get; set; } = new List<Guid>();
+        public List<string> FolderNames { get; set; } = new List<string>();
 
         public DescriptionDTO GetDTO()
         {

@@ -140,6 +140,10 @@ foreach (var f in folders)
     newItem.Tags.Items.Add("Medportal");
     newItem.Tags.Items.Add("Mediasite");
 
+    foreach(var fn in desc.FolderNames){
+        newItem.Tags.Items.Add(fn);
+    }
+
     foreach(var p in desc.Presenters)
     {
         newItem.Tags.Items.Add(p);
@@ -202,6 +206,15 @@ foreach (var f in folders)
 //Write success xml to filesystem
 string xmlResult;
 #region Success
+
+//Remove all items past 5 in the media object
+//Debug purposes
+//if(media.Channel.Items.Count > 5)
+//{
+//    //Only keep items 5-10
+//    media.Channel.Items = media.Channel.Items.GetRange(5, 10);
+//}
+
 using (StringWriter stringwriter = new System.IO.StringWriter())
 {
     var serializer = new XmlSerializer(media.GetType());
@@ -210,6 +223,39 @@ using (StringWriter stringwriter = new System.IO.StringWriter())
 }
 
 var prettyDoc = XDocument.Parse(xmlResult);
+
+if(config.GetValue<bool>("ValidateResourceUrlsBeforeExport"))
+{
+    var urlContentResourceElements = prettyDoc.Descendants("urlContentResource");
+    if(urlContentResourceElements.Count() > 0)
+    {
+        //Loop through each element and get the url attribute
+        foreach(var ue in urlContentResourceElements)
+        {
+            var url = ue.Attribute("url").Value;
+
+            //Send a request to the url to make sure it's valid
+            using(var httpClient = new HttpClient())
+            {
+                var message = $"Checking {url}";
+                var response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Head, url));
+                if(response.IsSuccessStatusCode)
+                {
+                    // If the status code is 200, then the URL is valid
+                    message += " - 200 OK";
+                } else
+                {
+                    message += $" - {response.StatusCode}";
+                    Debugger.Break();
+                }
+
+                Console.WriteLine(message);
+            }
+        }
+    }
+}
+
+
 System.IO.File.WriteAllText(@"export\export.xml", prettyDoc.ToString());
 #endregion
 
@@ -278,6 +324,8 @@ static string GetVideoAndSlides(string _basePath, string folderName, Item newIte
     {
         //Okay in this case it's that it's probably STREAMING only, out work around is these are detected in advance, then we VOD export the video and place a "video.mp4" in the folder, then just fake this
         fileName = "video.mp4";
+
+        //Slides are skipped because they are baked into the mp4
     } else
     {
         //Order the mp4Nodes by the FileLength element
@@ -289,46 +337,46 @@ static string GetVideoAndSlides(string _basePath, string folderName, Item newIte
 
         //Get the filename from the videoNode
         fileName = smallestNode?.Element("FileName")?.Value ?? "";
-    }
 
-    //Handle the slides
-    //Search for the first node that has a child element named "Slides"
-    var slideNodes = xdoc.Descendants("Slides").FirstOrDefault();
-    if(slideNodes != null)
-    {
-        var slideContent = slideNodes.Parent;
-
-        var slides = slideContent.Descendants("Slide");
-        if (slides.Count() > 0)
+        //Handle the slides
+        //Search for the first node that has a child element named "Slides"
+        var slideNodes = xdoc.Descendants("Slides").FirstOrDefault();
+        if (slideNodes != null)
         {
-            var filenameBase = slideContent.Element("FileName")?.Value;
-            foreach (var slide in slides)
+            var slideContent = slideNodes.Parent;
+
+            var slides = slideContent.Descendants("Slide");
+            if (slides.Count() > 0)
             {
-                var index = int.Parse(slide.Element("Number").Value);
+                var filenameBase = slideContent.Element("FileName")?.Value;
+                foreach (var slide in slides)
+                {
+                    var index = int.Parse(slide.Element("Number").Value);
 
-                var newSlide = new SceneCuePoint() { Title = $"Slide {index}", };
-
-
-                var slideTime = int.Parse(slide.Element("Time").Value);
-
-                newSlide.SceneStartTime = MillisecondsToTimeString(slideTime);
-                newSlide.Description = $"Slide {index} @ {newSlide.SceneStartTime}";
+                    var newSlide = new SceneCuePoint() { Title = $"Slide {index}", };
 
 
-                //Filename base has {0:D4} in it, I need to get the number after the D to know the digits
-                var digits = int.Parse(filenameBase.Substring(filenameBase.IndexOf("{0:D") + 4, 1));
+                    var slideTime = int.Parse(slide.Element("Time").Value);
 
-                //The indexname now needs to be as long as the digit number, like 0001 or 0010
+                    newSlide.SceneStartTime = MillisecondsToTimeString(slideTime);
+                    newSlide.Description = $"Slide {index} @ {newSlide.SceneStartTime}";
 
-                var slideFilename = $"{filenameBase.Substring(0, filenameBase.IndexOf("{0:D"))}{index.ToString($"D{digits}")}_full.jpg";
-                newSlide.Scene.Resource.Url = $@"{_basePath}{encodedName}/Content/{slideFilename}";
 
-                newItem.Scenes.CuePoints.Add(newSlide);
+                    //Filename base has {0:D4} in it, I need to get the number after the D to know the digits
+                    var digits = int.Parse(filenameBase.Substring(filenameBase.IndexOf("{0:D") + 4, 1));
+
+                    //The indexname now needs to be as long as the digit number, like 0001 or 0010
+
+                    var slideFilename = $"{filenameBase.Substring(0, filenameBase.IndexOf("{0:D"))}{index.ToString($"D{digits}")}_full.jpg";
+                    newSlide.Scene.Resource.Url = $@"{_basePath}{encodedName}/Content/{slideFilename}";
+
+                    newItem.Scenes.CuePoints.Add(newSlide);
+                }
             }
-        }
-        else
-        {
-            //Debugger.Break();
+            else
+            {
+                //Debugger.Break();
+            }
         }
     }
 
@@ -346,10 +394,11 @@ static Description GetDescription(XmlDocument doc, Guid msId)
     foreach (XmlNode folderNode in folderNodes)
     {
         var folderTitle = folderNode.SelectSingleNode("Name").InnerText;
-        if (folderTitle.ToLower() != "mediasite" && folderTitle.ToLower() != "medportal")
+        if (folderTitle.ToLower() != "mediasite" && folderTitle.ToLower() != "medportal" && !folderTitle.Contains("_export"))
         {
             oldPath += $"/{folderTitle}";
             description.FolderIds.Add(new Guid(folderNode.SelectSingleNode("Id//Value").InnerText));
+            description.FolderNames.Add(folderTitle);
         }
     }
     description.LegacyFolderStructure = oldPath;
